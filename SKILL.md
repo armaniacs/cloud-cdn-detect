@@ -52,11 +52,19 @@ curl -sIL https://<domain>    # follow redirects
 - Some configurations return errors for HEAD (e.g. `x-cache: Error from cloudfront`). Don't jump to conclusions; try GET or another path once
 - `server-timing` can leak the PaaS backend (`aws-nrt` etc.)
 
-### 3. Resolve DNS
+### 3. Resolve DNS (resolver-aware)
+
+First, record your own resolver (`scutil --dns` on macOS, `/etc/resolv.conf`, or `systemd-resolve --status` on Linux).
+Then resolve explicitly:
+
 ```bash
-dig +short <host>          # A / AAAA
-dig +short <host> CNAME
+dig +short <host>                  # A / AAAA via system-default (record which resolver this was)
+dig +short <host> @1.1.1.1         # Cloudflare
+dig +short <host> @8.8.8.8         # Google
+dig +short <host> CNAME @1.1.1.1
 ```
+
+Record the resolver, timestamp, TTL, and whether CNAME was absent for every row in the Evidence table.
 - Candidates: apex, www, app, api, login, admin, status, cdn, assets, static, img
 - Root domains can hide CNAMEs behind ALIAS / direct A records (verified example: CloudFront IPs set directly as A records)
 
@@ -97,7 +105,7 @@ Compare against `references/provider-signatures.md`. **When a signature not in t
 <domain> is estimated to run on <provider> (confidence: high/medium/low)
 
 ## Evidence
-| Observation | Result | Suggests |
+| Observation | Resolver | Result | Suggests |
 |---|---|---|
 | HTTP header | x-amz-cf-id: … | AWS CloudFront |
 | DNS | A 54.239.163.x | CloudFront edge |
@@ -124,6 +132,9 @@ Compare against `references/provider-signatures.md`. **When a signature not in t
 8. **Absence of a signature is not evidence of absence**: headers can be removed by reverse proxies and security products
 9. **Edge IPs change**: geo-distributed CDN IPs change with each request. Observe multiple times to see the trend
 10. **Big players use their own signatures**: Google (`server: gws`), Apple (`server: Apple`) return their own names. Whether they combine downstream CDNs may be unreadable from headers
+11. **Resolver matters**: the same name can return different answers via system-default vs 1.1.1.1 vs 8.8.8.8 (cache / ECS / filtering). Always record `@resolver`.
+12. **Route 53 Alias hides CNAME**: apex ALIAS records return direct A records. Absence of CNAME is not evidence of no CDN.
+13. **Private names are invisible from outside**: private hosted zones and VPC Lattice names only resolve from associated VPCs. Do not conclude absence from public dig.
 
 ## Worked example (real observation, target withheld, 2026-11-04)
 
