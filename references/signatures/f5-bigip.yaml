@@ -1,0 +1,16 @@
+provider: f5-bigip
+display: F5 BIG-IP (LTM/ASM, usually on-prem)
+verified: false
+sources:
+  - https://github.com/EnableSecurity/wafw00f
+signals:
+  - type: cookie
+    match: BigipServer*
+    pattern: ^BigipServer
+    weight: 5
+    source: https://github.com/EnableSecurity/wafw00f (wafw00f f5bigipltm plugin, passive cookie)
+  - type: cookie
+    match: TS<hex>
+    pattern: ^TS[a-fA-F0-9]{6,8}=
+    weight: 5
+    source: https://github.com/EnableSecurity/wafw00f (wafw00f f5bigipasm plugin, passive cookie)

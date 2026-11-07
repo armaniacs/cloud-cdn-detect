@@ -1,0 +1,20 @@
+provider: edgecast
+display: Verizon Edgecast CDN
+verified: false
+sources:
+  - https://github.com/EnableSecurity/wafw00f
+signals:
+  - type: header
+    match: Server
+    pattern: ^ECD
+    weight: 10
+    source: https://github.com/EnableSecurity/wafw00f (wafw00f edgecast plugin)
+  - type: header
+    match: Server
+    pattern: ^ECS
+    weight: 10
+    source: https://github.com/EnableSecurity/wafw00f (wafw00f edgecast plugin)
+  - type: cname
+    pattern: \.edgecastcdn\.net$
+    weight: 25
+    source: https://github.com/EnableSecurity/wafw00f

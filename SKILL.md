@@ -173,7 +173,7 @@ Score with `S_total = min(100, Σ w_i)` (weights table in `references/provider-s
 - Provider side: case studies / press releases from AWS / Google Cloud / Azure / Cloudflare etc.
 - Operator side: official blogs, engineering blogs (Zenn / Qiita / Hatena), engineer job postings
 - Third party (read-only, hierarchy level 5): bgp.he.net (`curl https://bgp.he.net/AS<number>`), MXToolBox (`curl -s "https://mxtoolbox.com/api/v1/lookup/dns/<domain>"`), Cloudflare Radar (`radar.cloudflare.com/domains/domain/<domain>`, browser only — curl 403s), urlscan.io (`api/v1/search/?q=domain:<domain>` then read the result page in a browser for IP/ASN/cert/headers)
-- Key holders only (past data, never trigger new scans): Shodan / Censys / VirusTotal / SecurityTrails / ViewDNS / Wappalyzer GUI. `shodan/scan`, urlscan Rescan, and any on-demand scan call are forbidden — they are active scanning, not passive observation
+- Key holders only (past data, never trigger new scans): Shodan / Censys / VirusTotal / SecurityTrails / ViewDNS / Wappalyzer GUI. `shodan/scan`, urlscan Rescan, and any on-demand scan call are forbidden — they are active scanning, not passive observation. webappanalyzer categories (31: CDN, 62: PaaS, 27: IaaS) are a candidate-mining source only — verify each pattern before adding, never bulk-import
 - Example queries: `"<domain>" AWS`, `"<company>" case study cloud`, `"<company>" engineer hiring AWS`, `"<社名>" 導入事例 クラウド`
 
 ### 9. Report
@@ -217,6 +217,7 @@ Edge: <CDN/WAF> / Platform: <PaaS or n/a> / Origin: <IaaS/hosting or unknown>
 15. **VPC origins hide the origin by design** (CloudFront, Nov 2024): ALB/NLB/EC2 in private subnets leave no distinguishing edge trace. Origin is "private VPC" at most. Only a leaked `internal-*` ELB hostname or `*.compute.internal` name upgrades this — and only to the type/region in the leak.
 16. **Latency-routed globals resolve differently per location** (e.g. Lambda Web Functions `*.lambda-web.global.on.aws` → per-region CNAMEs). Different CNAME chains from different resolvers are routing, not multi-CDN or fast-flux. Record resolver + vantage for every DNS row.
 17. **JA4S rotates with stack updates** — never hardcode or copy hashes. Always capture target + reference in the same session and compare; record the raw strings (`references/tls-fingerprints.md`).
+18. **Rented compute proves the provider, not the tenant**: an IP inside AWS/GCP/Azure/Alibaba general ranges may host anyone. Check MISP warninglists for shared infra; tenant-level claims need a CNAME or header, otherwise cap confidence and note the shared use.
 
 ## Worked example (real observation, target withheld, 2026-11-04)
 

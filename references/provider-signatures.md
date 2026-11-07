@@ -58,6 +58,7 @@ Example whois of a Tokyo-region IP: `OrgName: Amazon Technologies Inc.` / `NetNa
 | Fastly | `x-served-by: cache-<airport-code>-*` (e.g. `cache-itm1220029-ITM`) ✓, `x-cache: MISS, HIT, MISS` ✓, `x-cache-hits` ✓, `x-timer` ✓, `Fastly-Debug-Digest`, `Server: artisan` (some properties, e.g. fastly.com) | `*.fastly.net`, `nonssl.global-ssl.fastly.net`, `*.fastlylb.com` | AS54113 (FASTLY) |
 | Akamai | `Server: AkamaiGHost` ✓ (observed on www.microsoft.com), `X-Akamai-Transformed`, `X-Check-Cacheable` | `*.akamaiedge.net` (Standard TLS), `*.edgekey.net` (Enhanced TLS), `*.edgesuite.net`, `*.akamaized.net`, `*.akadns.net`. Never shorten to `akamai.net` — that misses `akamaiedge.net` on dot-boundary | AS20940 / AS16625 (AKAMAI). No official CIDR feed; ASN tracking is the standard |
 | Azure Front Door | `x-azure-ref`, `X-MSEdge-Ref` | `*.azurefd.net`, `*.afd.azureedge.net` | AS8075 (MICROSOFT) |
+| Verizon Edgecast | `Server: ECD…` / `Server: ECS…` (passive header, per wafw00f) | `*.edgecastcdn.net` | ASN varies by PoP; corroborate CNAME + Server |
 | Azure CDN | `X-Cache: *OriginShield*` | `*.azureedge.net` | AS8075 |
 | App Service / Cloud Services | | `{name}.{region}.cloudapp.azure.com` (`{region}` is an Azure slug, decode via `references/region-codes.md`), `*.azurewebsites.net` (no region) | AS8075 |
 
@@ -72,6 +73,7 @@ Sourced from [ProjectDiscovery cdncheck `provider.yaml`](https://github.com/proj
 | Imperva (Incapsula) | `X-Iinfo`, `X-CDN: Imperva`, cookies `incap_ses_*`, `visid_incap_*` | `*.incapdns.net` | Official IP list via API endpoint (see cdncheck sources) |
 | Sucuri CloudProxy | `Server: Sucuri/Cloudproxy`, `X-Sucuri-ID`, `X-Sucuri-Cache` | `*.sucuri.net` | Official CIDR incl. `192.88.134.0/23` |
 | Alibaba Cloud CDN | `Server: Tengine` ✓, `eagleeye-traceid` ✓ (EagleEye tracing), `ups-target-key: cdn-relay.vipserver` ✓, `served-from` ✓, `network_info: CC_CITY_NNNN` ✓ (e.g. `JP_TOKYO_2516`) | `*.alibabadns.com` (Alibaba DNS, e.g. `g.alicdn.com.gds.alibabadns.com`). Observed Tokyo chain continues to `*.edgesuite.net` → Akamai — layered delivery, report Edge and Alibaba stack separately | Resolved IPs whois to the delivering edge (Akamai in the observed case); judge per-resolution |
+| F5 BIG-IP (LTM/ASM, usually on-prem) | Cookies `BigipServer*` (LTM persistence), `TS<hex>` (ASM, 6–8 hex digits) — passive, per wafw00f; `X-Cnection: close` only with an attack request (forbidden, do not use) | ASN/whois shows the operator, not F5 | Report as Platform/Gateway |
 | CDNetworks | Vendor headers vary by property | Apex/edge hostnames per contract | Static CIDR in `provider.yaml` (`cdnetworks:` block) |
 | ArvanCloud | Vendor headers vary by property | `*.arvancloud.ir` feed `https://www.arvancloud.ir/fa/ips.txt` | AS208006 / AS205585; static CIDR `185.143.232.0/22`, `185.215.232.0/22` etc. |
 | Baidu Cloud CDN | Vendor headers vary by property | Baidu edge hostnames | Static CIDR in `provider.yaml` (`baidu:` block, hundreds of /24) |
@@ -181,12 +183,36 @@ Example: `cf-ray` + Cloudflare IP (Edge: Cloudflare), `x-vercel-id: kix1::…` (
 Passive operation is the default and the only behavior without explicit target permission. The following are documented for completeness and MUST NOT run unless the target explicitly opts in:
 
 - Akamai `Pragma: akamai-x-cache-on, akamai-x-cache-remote-on, akamai-x-check-cacheable, akamai-x-get-cache-key, akamai-x-get-true-cache-key, akamai-x-get-request-id, akamai-x-serial-no` — reveals `X-Cache: TCP_HIT` / `X-Serial` on Akamai edges.
-- WAF error-page fingerprinting (sending malformed input to trigger block pages such as Imperva "incident ID", FortiWeb `cookiesession1`, AWS WAF "Request blocked") — active probing, same prohibition as port scans.
+- WAF error-page fingerprinting (sending malformed input to trigger block pages such as Imperva "incident ID", FortiWeb `cookiesession1`, FortiGate `//globalurl.fortinet.net` + `Event ID`, AWS WAF "Request blocked", F5 ASM "the requested url was rejected" + "please consult with your administrator") — active probing, same prohibition as port scans. Documented from [wafw00f](https://github.com/EnableSecurity/wafw00f) plugin sources; observe-only, never trigger.
 - Any `shodan/scan`-style on-demand scan or urlscan Rescan.
 
 ## SaaS (reported separately as services in use, not as "the company's infrastructure")
 
-Zendesk (`support.*`, `static.zdassets.com`), statuspage.io, Stripe, Google speech recognition, reCAPTCHA, etc. When an FAQ or spec text leads to an inference such as "the speech recognition is Google's", state it clearly separated from technical observation (headers / DNS / whois).
+CNAME suffixes below identify the service in use (sourced from
+ProjectDiscovery `nuclei-templates` `dns/dns-saas-service-detection.yaml`,
+established knowledge — verify when it matters):
+
+Zendesk (`support.*`, `static.zdassets.com`, `zdassets.com`, `zdorigin.com`),
+statuspage.io, Stripe, SendGrid (`sendgrid.net`), HubSpot (`*.hubspot.com`,
+`*.hsforms.com`, `*.hs-scripts.com`), Webflow (`proxy-ssl.webflow.com`),
+GitBook (`*.gitbook.io`), Discourse (`bydiscourse.com`, `hosted-by-discourse.com`),
+Ghost (`ghost.io`), Firebase (`*.firebaseapp.com`, `*.firebaseio.com`,
+`*.appspot.com`, `*.ghs.googlehosted.com`), GitLab (`*.gitlab.io`),
+Salesforce (`*.force.com`, `*.siteforce.com`, `*.salesforce.com`),
+DigitalOcean App Platform (`*.ondigitalocean.app`), WP Engine (`*.wpengine.com`),
+Google speech recognition, reCAPTCHA, etc. When an FAQ or spec text leads to an inference such as "the speech recognition is Google's", state it clearly separated from technical observation (headers / DNS / whois).
+
+## Shared-infrastructure guard (MISP warninglists)
+
+An IP inside a cloud/CDN range proves the provider, not the tenant:
+general-purpose rented compute changes tenants constantly. Before concluding
+dedicated use from IP ownership alone, check
+[MISP misp-warninglists](https://github.com/MISP/misp-warninglists/tree/main/lists)
+(`amazon-aws`, `google-gcp`, `microsoft-azure`, `alibaba-cloud`,
+`tencent-cloud`, `akamai`, `fastly`, `cloudflare*`, `gcore`, `imperva`,
+`sucuri`, …). A hit means shared tenancy is possible — tenant-level claims
+(Vercel-on-AWS, shop-on-Shopify, SaaS CNAME above) still require a CNAME or
+header, otherwise cap confidence and note the shared use.
 
 ## On signature stripping and spoofing
 
