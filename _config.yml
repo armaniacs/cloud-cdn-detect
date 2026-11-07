@@ -1,0 +1,4 @@
+title: cloud-cdn-detect
+description: Identify which cloud, CDN, or hosting provider runs behind a website — passive observation only.
+theme: minima
+show_excerpts: false
