@@ -17,6 +17,10 @@ Dates are JST. Entries under `Unreleased` move to a dated section on commit.
 - Bilingual docs site (EN/JA): `index-ja.md` landing and `CONTRIBUTING-ja.md`
   with EN↔JA switch links. Reference docs (SKILL, signatures, changelog)
   stay English as the source of truth.
+- Signatures YAML (Task 10): `references/signatures/SCHEMA.md` (v1, Python+PyYAML,
+  provider-per-file), 16 Emerging providers as YAML, `tools/validate-signatures.py`
+  (canonical weights, regex compile, boundary negative tests), read-only CI
+  (`.github/workflows/validate-signatures.yml`, validates on PR/push, never commits).
 
 ## [2026-11-07] — DB拡充・多層判定・Pages足場
 
