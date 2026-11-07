@@ -152,7 +152,7 @@ Add weights of all matching signals, capped at 100:
 | Official CIDR match (§5c) | 35 | Anycast/netblock is hardest to fake |
 | CNAME to provider domain (with boundary rules) | 25 | Deliberate delegation by the operator |
 | Provider CA issuer (ACM / Google Trust / Cloudflare) corroborating TLS SAN | 25 | Management-plane evidence |
-| TLS stack fingerprint (JA4S/JA3S, when available) | 15 | Transport-layer corroboration |
+| TLS stack fingerprint (JA4S, captured same-session) | 15 | Transport-layer corroboration. No prefab hashes — see `references/tls-fingerprints.md` |
 | Diagnostic header (`x-amz-cf-id`, `cf-ray`, `x-served-by: cache-*`, …) | 10 | Strong but strippable |
 | PTR match | 10 | Auxiliary |
 | Provider cookie (`sac-elb-session`, `incap_ses_*`, …) | 5 | Weakest, easily set by others |
