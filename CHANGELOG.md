@@ -38,6 +38,10 @@ Dates are JST. Entries under `Unreleased` move to a dated section on commit.
 - CloudFront VPC origins (Nov 2024): no edge-signature change documented;
   `internal-*` ELB / `*.compute.internal` leaks as VPC-origin hints,
   pitfall 15 forbids origin guessing beyond the leak.
+- Lambda Web Functions (GA Oct 2026): global/per-region hostname chain
+  (`*.lambda-web.global.on.aws` → `*.r8m.lambda-web.{region}.on.aws` →
+  `*.prod.frontend.lambda-lite.aws.dev`), `lambda-web-request-id` header,
+  pitfall 16 on latency-routed CNAMEs; 6 new IATA hubs (JFK/ATL/AMS/HEL/MAA/HIO).
 
 ## [2026-11-07] — DB拡充・多層判定・Pages足場
 
