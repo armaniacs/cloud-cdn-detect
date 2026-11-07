@@ -26,6 +26,11 @@ signals:
     verified: true
     source: https://www.fastly.com/documentation/reference/http/
   - type: header
+    match: X-Fastly-Request-ID
+    pattern: ^[0-9a-f-]+$
+    weight: 10
+    source: https://github.com/EnableSecurity/wafw00f (wafw00f fastly plugin)
+  - type: header
     match: x-timer
     pattern: ^S[0-9]
     weight: 10

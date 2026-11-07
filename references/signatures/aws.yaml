@@ -19,7 +19,7 @@ signals:
     source: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/RequestAndResponseBehaviorCustomOrigin.html
   - type: header
     match: via
-    pattern: 1\.1 [0-9a-f]+\.cloudfront\.net \(CloudFront\)
+    pattern: 1\.1 [0-9a-f]+\.cloudfront\.net \([Cc]loud[Ff]ront\)
     weight: 10
     verified: true
     source: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/RequestAndResponseBehaviorCustomOrigin.html
