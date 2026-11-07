@@ -1,8 +1,7 @@
-# Signatures YAML schema (v1)
+# Signatures YAML schema (v1.1)
 
-Machine-checkable mirror of the Emerging CDN/WAF section in
-`references/provider-signatures.md`. Markdown stays the source of truth
-until every provider migrates (hybrid policy).
+Machine-checkable mirror of `references/provider-signatures.md`. Markdown stays
+the source of truth (hybrid policy).
 
 ## File layout
 
@@ -25,12 +24,13 @@ until every provider migrates (hybrid policy).
 |---|---|---|
 | `type` | yes | one of `cidr` `cname` `cert` `tls` `header` `ptr` `cookie` `asn` |
 | `weight` | yes | canonical weight for the type (see table) |
-| `pattern` | for `cname`/`header`/`cookie`/`ptr` | Python regex, label-boundary aware |
+| `pattern` | for `cname`/`cert`/`header`/`cookie`/`ptr` | Python regex, label-boundary aware (`cert` matches the issuer string) |
 | `value` | for `cidr` (inline) | CIDR string, e.g. `192.88.134.0/23` |
 | `values` | alternative to `value` | list of inline CIDRs / ASNs (`AS208006`) |
 | `ref` | alternative, `cidr` only | bulk pointer, e.g. `cdncheck:cidr:tencent` (full list lives upstream, never copied here) |
 | `match` | for `header`/`cookie` | header/cookie name, e.g. `Server`, `incap_ses_*` |
 | `source` | yes | URL backing this signal |
+| `verified` | optional per signal | `true` if directly observed (mirrors ✓ in Markdown) |
 | `negative` | recommended for `cname`/`header` | strings the pattern MUST NOT match (boundary tests) |
 
 Canonical weights: `cidr`/`asn` 35, `cname`/`cert` 25, `tls` 15,
@@ -42,5 +42,5 @@ Canonical weights: `cidr`/`asn` 35, `cname`/`cert` 25, `tls` 15,
 1. YAML parses; required fields present; slug == filename.
 2. `type` in enum; `weight` equals the canonical weight for the type.
 3. Every regex compiles; every `negative` entry does NOT match.
-4. `cidr` has exactly one of `value`/`values`/`ref`; `cname`/`header`/
+4. `cidr` has exactly one of `value`/`values`/`ref`; `cname`/`cert`/`header`/
    `cookie`/`ptr` have `pattern`; `asn` has `values`.

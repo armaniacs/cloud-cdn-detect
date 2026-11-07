@@ -1,0 +1,65 @@
+provider: fastly
+display: Fastly
+verified: true
+sources:
+  - https://api.fastly.com/public-ip-list
+  - https://www.fastly.com/documentation/
+signals:
+  - type: header
+    match: x-served-by
+    pattern: ^cache-[a-z]+[0-9]+-[A-Z]+
+    weight: 10
+    verified: true
+    source: https://www.fastly.com/documentation/reference/http/
+    negative:
+      - marketing-site
+  - type: header
+    match: x-cache
+    pattern: ^(HIT|MISS)
+    weight: 10
+    verified: true
+    source: https://www.fastly.com/documentation/reference/http/
+  - type: header
+    match: x-cache-hits
+    pattern: ^[0-9]+$
+    weight: 10
+    verified: true
+    source: https://www.fastly.com/documentation/reference/http/
+  - type: header
+    match: x-timer
+    pattern: ^S[0-9]
+    weight: 10
+    verified: true
+    source: https://www.fastly.com/documentation/reference/http/
+  - type: header
+    match: Fastly-Debug-Digest
+    pattern: .+
+    weight: 10
+    source: https://www.fastly.com/documentation/reference/http/
+  - type: header
+    match: Server
+    pattern: ^Artisanal bits$
+    weight: 10
+    verified: true
+    source: https://www.fastly.com/
+  - type: cname
+    pattern: \.fastly\.net$
+    weight: 25
+    source: https://www.fastly.com/documentation/
+  - type: cname
+    pattern: (^|\.)nonssl\.global-ssl\.fastly\.net$
+    weight: 25
+    source: https://www.fastly.com/documentation/
+  - type: cname
+    pattern: \.fastlylb\.net$
+    weight: 25
+    source: https://www.fastly.com/documentation/
+  - type: cidr
+    ref: https://api.fastly.com/public-ip-list
+    weight: 35
+    source: https://api.fastly.com/public-ip-list
+  - type: asn
+    values:
+      - AS54113
+    weight: 35
+    source: https://api.fastly.com/public-ip-list

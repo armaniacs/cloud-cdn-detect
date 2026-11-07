@@ -1,0 +1,63 @@
+provider: gcp
+display: Google Cloud
+verified: true
+sources:
+  - https://www.gstatic.com/ipranges/cloud.json
+  - https://cloud.google.com/storage/docs/json_api/
+signals:
+  - type: header
+    match: x-guploader-uploadid
+    pattern: .+
+    weight: 10
+    verified: true
+    source: https://cloud.google.com/storage/docs/json_api/
+  - type: header
+    match: x-goog-generation
+    pattern: .+
+    weight: 10
+    verified: true
+    source: https://cloud.google.com/storage/docs/json_api/
+  - type: header
+    match: x-goog-hash
+    pattern: .+
+    weight: 10
+    verified: true
+    source: https://cloud.google.com/storage/docs/json_api/
+  - type: header
+    match: x-goog-storage-class
+    pattern: .+
+    weight: 10
+    verified: true
+    source: https://cloud.google.com/storage/docs/json_api/
+  - type: cname
+    pattern: (^|\.)storage\.googleapis\.com$
+    weight: 25
+    verified: true
+    source: https://cloud.google.com/storage/docs/
+  - type: header
+    match: via
+    pattern: ^1\.1 google$
+    weight: 10
+    verified: true
+    source: https://cloud.google.com/load-balancing/docs/
+    negative:
+      - 1.1 googleplex
+  - type: cname
+    pattern: \.cloudfunctions\.net$
+    weight: 25
+    verified: true
+    source: https://cloud.google.com/functions/docs/
+  - type: cname
+    pattern: ^lh3\.googleusercontent\.com$
+    weight: 25
+    source: https://developers.google.com/people/image-hosting
+  - type: asn
+    values:
+      - AS15169
+    weight: 35
+    source: https://www.gstatic.com/ipranges/cloud.json
+  - type: cert
+    pattern: Google Trust Services
+    weight: 25
+    verified: true
+    source: https://pki.goog/

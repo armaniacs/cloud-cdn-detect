@@ -10,7 +10,7 @@ CANONICAL_WEIGHTS = {
     "cidr": 35, "asn": 35, "cname": 25, "cert": 25,
     "tls": 15, "header": 10, "ptr": 10, "cookie": 5,
 }
-PATTERN_TYPES = {"cname", "header", "cookie", "ptr"}
+PATTERN_TYPES = {"cname", "cert", "header", "cookie", "ptr"}
 
 errors: list[str] = []
 
