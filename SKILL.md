@@ -214,6 +214,7 @@ Edge: <CDN/WAF> / Platform: <PaaS or n/a> / Origin: <IaaS/hosting or unknown>
 13. **Private names are invisible from outside**: private hosted zones and VPC Lattice names only resolve from associated VPCs. Do not conclude absence from public dig.
 14. **Edge PoP ≠ origin region**: `NRT` in `x-amz-cf-pop`/`cf-ray` means a Tokyo edge served the response (it follows the viewer). Region conclusions need compute signals (`x-vercel-id: hnd1` etc.) or prefix evidence — see `references/region-codes.md`.
 15. **VPC origins hide the origin by design** (CloudFront, Nov 2024): ALB/NLB/EC2 in private subnets leave no distinguishing edge trace. Origin is "private VPC" at most. Only a leaked `internal-*` ELB hostname or `*.compute.internal` name upgrades this — and only to the type/region in the leak.
+16. **Latency-routed globals resolve differently per location** (e.g. Lambda Web Functions `*.lambda-web.global.on.aws` → per-region CNAMEs). Different CNAME chains from different resolvers are routing, not multi-CDN or fast-flux. Record resolver + vantage for every DNS row.
 
 ## Worked example (real observation, target withheld, 2026-11-04)
 

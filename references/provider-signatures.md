@@ -24,6 +24,7 @@ Match observed HTTP headers, DNS records, whois results, and TLS certificates ag
 | API Gateway | `x-amzn-RequestId`, `x-amzn-ErrorType` | `*.execute-api.<region>.amazonaws.com` | |
 | ELB / ALB | `Server: awselb` | `dualstack.*.elb.amazonaws.com` | |
 | ACM-issued certificates | Certificate issuer: `Amazon RSA 2048 M01` ✓ etc. | | |
+| Lambda Web Functions (GA Oct 2026) | Platform injects `lambda-web-request-id` into the request (visible in responses only if the app echoes it); `X-Forwarded-For` present | Global URL `{id}.lambda-web.global.on.aws` → latency-routed CNAME `{id}.r8m.lambda-web.{region}.on.aws` (PerRegion URL) → `c300.{region}.prod.frontend.lambda-lite.aws.dev` → A. The CNAME chain differs by resolver location — compare `@1.1.1.1` vs `@8.8.8.8` and record where you resolved from | Frontend IPs whois to Amazon (AS16509). Regions observed: ap-northeast-1, us-east-1, us-east-2, us-west-2, eu-west-1, eu-central-1 |
 
 Example whois of a Tokyo-region IP: `OrgName: Amazon Technologies Inc.` / `NetName: AT-88-Z` / prefix `35.72.0.0/13` / AS16509 (AMAZON-02) ✓
 

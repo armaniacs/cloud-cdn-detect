@@ -156,6 +156,12 @@ Same IATA system as above. Frequently observed hubs:
 | ICN | Seoul | ap-northeast-2 |
 | HKG | Hong Kong | ap-east-1 |
 | BOM | Mumbai | ap-south-1 |
+| JFK | New York | us-east-1 |
+| ATL | Atlanta | us-east-1 |
+| AMS | Amsterdam | westeurope |
+| HEL | Helsinki | eu-north-1 (nearest) |
+| MAA | Chennai | ap-south-1 (nearest) |
+| HIO | Hillsboro (Portland metro) | us-west-2 |
 
 Any other 3-letter code: look it up as an IATA airport code. Codes name the
 **serving edge**, which follows the viewer — a Tokyo viewer hitting a US-only
@@ -174,3 +180,8 @@ origin's region.
 - Leaked AWS-internal hostnames decode as compute signals with standard slugs:
   `internal-*.{region}.elb.amazonaws.com`, `ip-10-0-x-x.{region}.compute.internal`
   (the latter is the documented EC2 VPC-origin domain format).
+- Lambda Web Functions: the PerRegion hostname embeds the serving region
+  (`{id}.r8m.lambda-web.{region}.on.aws`) — a **compute** signal. The global
+  hostname (`{id}.lambda-web.global.on.aws`) resolves to different PerRegion
+  CNAMEs per viewer location (latency routing), so always record where and
+  via which resolver you resolved it.
