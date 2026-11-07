@@ -1,0 +1,23 @@
+provider: gmo
+display: GMO Internet group (ConoHa / lolipop / heteml)
+verified: false
+sources:
+  - https://internet.gmo/
+signals:
+  - type: cname
+    pattern: \.conoha\.io$
+    weight: 25
+    source: https://internet.gmo/
+  - type: cname
+    pattern: \.lolipop\.jp$
+    weight: 25
+    source: https://internet.gmo/
+  - type: cname
+    pattern: \.heteml\.net$
+    weight: 25
+    source: https://internet.gmo/
+  - type: asn
+    values:
+      - AS7506
+    weight: 35
+    source: https://internet.gmo/

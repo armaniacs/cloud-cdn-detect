@@ -1,0 +1,22 @@
+provider: squarespace
+display: Squarespace
+verified: true
+sources:
+  - https://support.squarespace.com/hc/en-us
+signals:
+  - type: header
+    match: Server
+    pattern: ^Squarespace$
+    weight: 10
+    verified: true
+    source: https://support.squarespace.com/hc/en-us
+  - type: header
+    match: x-contextid
+    pattern: .+
+    weight: 10
+    verified: true
+    source: https://support.squarespace.com/hc/en-us
+  - type: cname
+    pattern: ext-cdn\.squarespace\.net$
+    weight: 25
+    source: https://support.squarespace.com/hc/en-us

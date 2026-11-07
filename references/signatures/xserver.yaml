@@ -1,0 +1,22 @@
+provider: xserver
+display: Xserver
+verified: true
+sources:
+  - https://www.xserver.co.jp/
+signals:
+  - type: header
+    match: Server
+    pattern: ^nginx$
+    weight: 10
+    verified: true
+    source: https://www.xserver.co.jp/
+  - type: cname
+    pattern: ^sv[0-9]+\.xserver\.jp$
+    weight: 25
+    source: https://www.xserver.co.jp/
+  - type: asn
+    values:
+      - AS131965
+    weight: 35
+    verified: true
+    source: https://www.xserver.co.jp/

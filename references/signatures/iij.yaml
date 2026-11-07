@@ -1,0 +1,12 @@
+provider: iij
+display: Internet Initiative Japan (IIJ)
+verified: true
+sources:
+  - https://www.iij.ad.jp/
+signals:
+  - type: asn
+    values:
+      - AS2497
+    weight: 35
+    verified: true
+    source: https://www.iij.ad.jp/

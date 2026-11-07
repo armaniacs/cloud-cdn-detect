@@ -1,0 +1,56 @@
+provider: sakura
+display: Sakura Internet (incl. Cloud ELB, Web Accelerator)
+verified: true
+sources:
+  - https://www.sakura.ad.jp/
+  - https://manual.sakura.ad.jp/cloud/appliance/enhanced-lb/
+signals:
+  - type: header
+    match: Server
+    pattern: ^nginx$
+    weight: 10
+    verified: true
+    source: https://www.sakura.ad.jp/
+  - type: cname
+    pattern: \.sakura\.ne\.jp$
+    weight: 25
+    source: https://www.sakura.ad.jp/
+  - type: header
+    match: via
+    pattern: ^1\.1 sac-elb$
+    weight: 10
+    verified: true
+    source: https://manual.sakura.ad.jp/cloud/appliance/enhanced-lb/
+  - type: cookie
+    match: sac-elb-session
+    pattern: ^sac-elb-session=
+    weight: 5
+    source: https://manual.sakura.ad.jp/cloud/appliance/enhanced-lb/
+  - type: header
+    match: x-webaccel-origin-status
+    pattern: .+
+    weight: 10
+    verified: true
+    source: https://www.sakura.ad.jp/
+  - type: header
+    match: via
+    pattern: ApacheTrafficServer
+    weight: 10
+    verified: true
+    source: https://www.sakura.ad.jp/
+  - type: cname
+    pattern: \.user\.webaccel\.jp$
+    weight: 25
+    verified: true
+    source: https://www.sakura.ad.jp/
+  - type: cname
+    pattern: site-[a-z0-9-]+\.gslb1\.sakura\.ne\.jp$
+    weight: 25
+    verified: true
+    source: https://www.sakura.ad.jp/
+  - type: asn
+    values:
+      - AS9370
+    weight: 35
+    verified: true
+    source: https://www.sakura.ad.jp/
