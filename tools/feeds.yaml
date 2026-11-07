@@ -1,0 +1,55 @@
+# Feed watch manifest — read by tools/check-feeds.py (Task 12).
+# Checks are liveness-first: a feed fails only on non-200, empty payload,
+# stale freshness field, or missing JSON key. One retry on transient 5xx.
+
+feeds:
+  - name: aws-ip-ranges
+    url: https://ip-ranges.amazonaws.com/ip-ranges.json
+    freshness_jsonpath: createDate
+    max_age_days: 14
+
+  - name: cloudfront-list
+    url: https://d7uri8nf7uskq.cloudfront.net/tools/list-cloudfront-ips
+    json_key: CLOUDFRONT_GLOBAL_IP_LIST
+
+  - name: gcp-cloud
+    url: https://www.gstatic.com/ipranges/cloud.json
+    freshness_jsonpath: creationTime
+    max_age_days: 14
+
+  - name: gcp-goog
+    url: https://www.gstatic.com/ipranges/goog.json
+
+  - name: azure-entry
+    url: https://www.microsoft.com/en-us/download/details.aspx?id=56519
+    note: entry page only; the dated ServiceTags URL itself rotates weekly
+
+  - name: cloudflare-v4
+    url: https://www.cloudflare.com/ips-v4
+    min_lines: 5
+
+  - name: cloudflare-v6
+    url: https://www.cloudflare.com/ips-v6
+    min_lines: 3
+
+  - name: fastly
+    url: https://api.fastly.com/public-ip-list
+    json_key: addresses
+
+  - name: gcore
+    url: https://api.gcore.com/cdn/public-ip-list
+
+  - name: github-meta
+    url: https://api.github.com/meta
+    json_key: pages
+
+  - name: arvancloud-txt
+    url: https://www.arvancloud.ir/fa/ips.txt
+    min_lines: 3
+
+  - name: gocache
+    url: https://gocache.com.br/ips
+    min_lines: 3
+
+  - name: cdncheck-provider
+    url: https://raw.githubusercontent.com/projectdiscovery/cdncheck/main/cmd/generate-index/provider.yaml
