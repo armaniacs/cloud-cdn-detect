@@ -35,6 +35,9 @@ Dates are JST. Entries under `Unreleased` move to a dated section on commit.
   region slugs (`*.cloudapp.azure.com`), both verified against docs;
   Sakura Cloud zones (`tk1a/tk1b/is1a/is1b`, verified against SDK source);
   Cloudflare/Fastly reuse IATA (no separate table).
+- CloudFront VPC origins (Nov 2024): no edge-signature change documented;
+  `internal-*` ELB / `*.compute.internal` leaks as VPC-origin hints,
+  pitfall 15 forbids origin guessing beyond the leak.
 
 ## [2026-11-07] — DB拡充・多層判定・Pages足場
 
