@@ -1,7 +1,7 @@
-# [Help wanted] Verify Route 53 Global Resolver behavior (GA 2026-03)
+# [Help wanted] Verify Route 53 Global Resolver behavior (reported GA 2026-03, link needed)
 
 ## Why
-Global Resolver went GA in 2026-03. It is expensive to run, so maintainers cannot verify alone.
+Global Resolver is reported to have gone GA in 2026-03 (announcement link needed — paste it here when posting). It is expensive to run, so maintainers cannot verify alone.
 
 ## Repro steps (only if you already run it)
 1. Link the AWS What's New / Docs URL for GA (paste URL + date accessed).
