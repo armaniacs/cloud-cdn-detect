@@ -1,0 +1,36 @@
+provider: alibaba-cloud
+display: Alibaba Cloud CDN
+verified: true
+sources:
+  - https://github.com/hdyrawan/w4f/blob/main/docs/vendor-signatures.md
+signals:
+  - type: header
+    match: Server
+    pattern: ^Tengine$
+    weight: 10
+    verified: true
+    source: direct observation (2026-11-08, g.alicdn.com)
+  - type: header
+    match: eagleeye-traceid
+    pattern: .+
+    weight: 10
+    verified: true
+    source: direct observation (2026-11-08, g.alicdn.com)
+  - type: header
+    match: ups-target-key
+    pattern: .+
+    weight: 10
+    verified: true
+    source: direct observation (2026-11-08, g.alicdn.com)
+  - type: header
+    match: Via
+    pattern: \bens-cache\b
+    weight: 10
+    source: https://github.com/hdyrawan/w4f/blob/main/docs/vendor-signatures.md
+    negative:
+      - not-a-cache
+  - type: cname
+    pattern: \.alibabadns\.com$
+    weight: 25
+    verified: true
+    source: direct observation (2026-11-08, g.alicdn.com.gds.alibabadns.com)

@@ -51,6 +51,10 @@ Dates are JST. Entries under `Unreleased` move to a dated section on commit.
 - cdncheck sync policy (§5c): provider.yaml as reference-upstream for
   static-CIDR/ASN-only providers; bulk auto-import explicitly declined
   (refs, not copies; change-tracking via feed-watch).
+- NetScaler / Alibaba: NetScaler ADC section (`\bns-cache\b` + validator
+  negative `ens-cache`, `NSC_*` cookies) and Alibaba Cloud row (Tengine,
+  eagleeye-traceid, alibabadns.com — direct observation of g.alicdn.com);
+  `ens-cache` issuer corroborated via w4f, never standalone.
 
 ## [2026-11-07] — DB拡充・多層判定・Pages足場
 
