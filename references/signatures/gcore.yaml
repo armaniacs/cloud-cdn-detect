@@ -1,0 +1,29 @@
+provider: gcore
+display: Gcore CDN
+verified: false
+sources:
+  - https://api.gcore.com/cdn/public-ip-list
+  - https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+signals:
+  - type: header
+    match: Server
+    pattern: ^gcore$
+    weight: 10
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+    negative:
+      - gcore-extra
+  - type: header
+    match: X-GCore-Request-ID
+    pattern: .+
+    weight: 10
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+  - type: cname
+    pattern: \.gcdn\.co$
+    weight: 25
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+    negative:
+      - gcdn.com
+  - type: cidr
+    ref: https://api.gcore.com/cdn/public-ip-list
+    weight: 35
+    source: https://api.gcore.com/cdn/public-ip-list

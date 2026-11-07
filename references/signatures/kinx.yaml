@@ -1,0 +1,10 @@
+provider: kinx
+display: KINX (Korea)
+verified: false
+sources:
+  - https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+signals:
+  - type: cidr
+    ref: cdncheck:cidr:kinx
+    weight: 35
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml

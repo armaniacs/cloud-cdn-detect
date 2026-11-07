@@ -1,0 +1,31 @@
+provider: sucuri
+display: Sucuri CloudProxy
+verified: false
+sources:
+  - https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+signals:
+  - type: header
+    match: Server
+    pattern: ^Sucuri/Cloudproxy$
+    weight: 10
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+  - type: header
+    match: X-Sucuri-ID
+    pattern: .+
+    weight: 10
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+  - type: header
+    match: X-Sucuri-Cache
+    pattern: .+
+    weight: 10
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+  - type: cname
+    pattern: \.sucuri\.net$
+    weight: 25
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+    negative:
+      - sucuri.net.evil.example
+  - type: cidr
+    value: 192.88.134.0/23
+    weight: 35
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml

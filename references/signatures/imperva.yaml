@@ -1,0 +1,32 @@
+provider: imperva
+display: Imperva Incapsula
+verified: false
+sources:
+  - https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+signals:
+  - type: header
+    match: X-Iinfo
+    pattern: .+
+    weight: 10
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+  - type: header
+    match: X-CDN
+    pattern: ^Imperva$
+    weight: 10
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+  - type: cookie
+    match: incap_ses_*
+    pattern: ^incap_ses_
+    weight: 5
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+  - type: cookie
+    match: visid_incap_*
+    pattern: ^visid_incap_
+    weight: 5
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+  - type: cname
+    pattern: \.incapdns\.net$
+    weight: 25
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+    negative:
+      - incapdns.net.evil.example
