@@ -33,11 +33,12 @@
 4 リゾルバとも A 回答が一致した。`example.com` は CDN ドメインではないため差が出にくいという想定どおりの結果。
 
 ## 3. 可視境界まとめ
-- 外から見える: パブリックゾーン、CNAME/A、エッジIPのwhois/ASN。
-- 外から見えない: プライベートゾーン、Lattice名 (関連付けVPCのみ)、オリジン内訳。
+- 外から見える: パブリックゾーンのA/AAAA/CNAME、CloudFront等のエッジIPのwhois/ASN、HTTPヘッダ署名、TLS証明書のissuer/SAN。
+- 外から見えない: プライベートホストゾーンの中身、VPC内リゾルバ限定の名前、Latticeサービス名 (関連付けVPCのみ)、CDNオリジン内訳。
+- Route 53エイリアス (apex等) はCNAMEに出ない。CNAME不在は「CDNでない」の証拠にならない。
 
 ## Sources
-- Amazon VPC User Guide — DNS attributes for your VPC (https://docs.aws.amazon.com/vpc/latest/userguide/vpc-dns.html, 取得日 2026-11-07)
-- Amazon VPC User Guide — Understanding Amazon DNS (https://docs.aws.amazon.com/vpc/latest/userguide/AmazonDNS-concepts.html, 取得日 2026-11-07)
-- Amazon Route 53 Developer Guide — What is Route 53 VPC Resolver? (https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver.html, 取得日 2026-11-07)
-- Amazon Route 53 Developer Guide — Working with private hosted zones (https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zones-private.html, 取得日 2026-11-07。旧小文字 URL `route53/.../hosted-zones-private.html` は 404 のため正規の大文字パスで取得)
+- AWS VPC DNS: https://docs.aws.amazon.com/vpc/latest/userguide/vpc-dns.html (2026-11-07取得)
+- Route 53 Resolver: https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver.html (2026-11-07取得)
+- Private hosted zones: https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zones-private.html (2026-11-07取得)
+- 手元実測: scutil + dig (2026-11-07, resolver 4種)
