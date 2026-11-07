@@ -75,7 +75,13 @@ signals:
   - type: cname
     pattern: \.elb\.amazonaws\.com$
     weight: 25
+    note: internal- prefix hostnames (internal-*.{region}.elb.amazonaws.com) indicate an internal LB, likely a CloudFront VPC origin — see provider-signatures.md
     source: https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/
+  - type: cname
+    pattern: ^internal-[a-z0-9-]+\.[a-z0-9-]+\.elb\.amazonaws\.com$
+    weight: 25
+    note: leaked internal-LB hostname = strong VPC-origin hint; region slug decodes as compute signal
+    source: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-vpc-origins.html
   - type: cert
     pattern: Amazon RSA 2048 M
     weight: 25

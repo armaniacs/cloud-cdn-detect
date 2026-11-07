@@ -48,6 +48,13 @@ signals:
     verified: true
     source: https://cloud.google.com/functions/docs/
   - type: cname
+    pattern: \.a\.run\.app$
+    weight: 25
+    note: region slug in {service}-{hash}-{region}.a.run.app decodes as compute signal; see region-codes.md
+    source: https://cloud.google.com/run/docs/
+    negative:
+      - run.app.evil.example
+  - type: cname
     pattern: ^lh3\.googleusercontent\.com$
     weight: 25
     source: https://developers.google.com/people/image-hosting
