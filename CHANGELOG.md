@@ -24,6 +24,10 @@ Dates are JST. Entries under `Unreleased` move to a dated section on commit.
 - Signatures YAML (Task 11): existing tables migrated (AWS/GCP/Cloudflare/Fastly/
   Akamai/Azure/Vercel/Netlify/GitHub Pages/Heroku/Shopify/Wix/Squarespace/Sakura/
   Xserver/GMO/IIJ), schema v1.1 (`cert` issuer patterns, optional per-signal `verified`).
+- Feed watch (Task 12): `tools/feeds.yaml` (13 official/upstream feeds),
+  `tools/check-feeds.py` (liveness + freshness + JSON-key checks, one retry on
+  transient 5xx), weekly `.github/workflows/feed-watch.yml` (failures filed to a
+  single `feed-watch` tracking issue; intake stays human).
 
 ## [2026-11-07] — DB拡充・多層判定・Pages足場
 
