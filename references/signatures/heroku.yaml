@@ -6,9 +6,11 @@ sources:
 signals:
   - type: header
     match: via
-    pattern: 1\.1 vegur
+    pattern: ^1\.1 vegur$
     weight: 10
     source: https://devcenter.heroku.com/
+    negative:
+      - 1.1 vegur-proxy
   - type: cname
     pattern: \.herokuapp\.com$
     weight: 25

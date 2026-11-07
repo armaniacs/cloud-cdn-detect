@@ -12,10 +12,12 @@ signals:
     source: https://vercel.com/docs/
   - type: header
     match: x-vercel-id
-    pattern: ^[a-z]{3}1?::[a-z0-9-]+$
+    pattern: ^[a-z]{3}[0-9]::[a-z0-9-]+$
     weight: 10
     verified: true
     source: https://vercel.com/docs/
+    negative:
+      - kix::abc123
   - type: header
     match: x-vercel-cache
     pattern: ^(HIT|MISS|STALE)$
