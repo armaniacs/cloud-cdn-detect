@@ -22,6 +22,8 @@ Match observed HTTP headers, DNS records, whois results, and TLS certificates ag
 
 Example whois of a Tokyo-region IP: `OrgName: Amazon Technologies Inc.` / `NetName: AT-88-Z` / prefix `35.72.0.0/13` / AS16509 (AMAZON-02) ✓
 
+**DNS visibility note**: Route 53 Alias (apex) returns direct A records with no CNAME. Private hosted zone and VPC Lattice names do not resolve from public resolvers. A `dig` result always depends on `@resolver` and where it was run (inside/outside the VPC); record both.
+
 ## Google Cloud (GCP)
 
 | Service | HTTP headers | Hostname / DNS | whois / ASN |
