@@ -110,7 +110,7 @@ grep -n "1.1.1.1" docs/research/2026-11-07-dns-resolution.md
 git add docs/research/2026-11-07-dns-resolution.md
 git commit -m "docs: add public resolver literature notes"
 ```
-Expected: `grep` が2件以上ヒットする。
+Expected: `grep` が1件以上ヒットする (追記文自体に `1.1.1.1` は1件のみ含まれるため)。
 
 ---
 
