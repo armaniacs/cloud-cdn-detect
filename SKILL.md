@@ -163,7 +163,7 @@ Run four layers in parallel, then score — do not stop at the first header hit:
 
 1. **Network**: every A/AAAA against §5c feeds (Radix/CIDR match, weight 35) + ASN/whois (§4–§5)
 2. **DNS**: every CNAME in the expanded chain against provider domains (weight 25, boundary rules apply)
-3. **Transport**: certificate SAN/issuer (§6–§6b, weight 25) + TLS stack fingerprint when available (JA4S/JA3S from the normal handshake, weight 15)
+3. **Transport**: certificate SAN/issuer (§6–§6b, weight 25) + TLS stack fingerprint when available (JA4S from a single-handshake capture, weight 15 — procedure and no-prefab-hash policy in `references/tls-fingerprints.md`)
 4. **Application**: diagnostic headers (weight 10) + PTR (weight 10) + provider cookies (weight 5)
 
 Score with `S_total = min(100, Σ w_i)` (weights table in `references/provider-signatures.md`). Decode PoP/region codes with `references/region-codes.md` and record the edge/compute location in Evidence — edge codes (CloudFront PoP, `cf-ray` suffix, `x-served-by`) locate the serving edge only; only compute-region signals (`x-vercel-id`, `server-timing` backend hints) locate the workload. Compare against `references/provider-signatures.md`. **When a signature not in the table appears, verify its origin via web search before appending it to that file** (this skill is designed to grow with every observation). Never append a signature with an unconfirmed origin, and never record the service you observed it on — append the signature and its technical source (official documentation etc.) only, so third-party target names stay out of this repository. Opt-in probes (Akamai `Pragma`, WAF error induction, on-demand scans) stay forbidden by default — see the signatures file.
@@ -215,6 +215,7 @@ Edge: <CDN/WAF> / Platform: <PaaS or n/a> / Origin: <IaaS/hosting or unknown>
 14. **Edge PoP ≠ origin region**: `NRT` in `x-amz-cf-pop`/`cf-ray` means a Tokyo edge served the response (it follows the viewer). Region conclusions need compute signals (`x-vercel-id: hnd1` etc.) or prefix evidence — see `references/region-codes.md`.
 15. **VPC origins hide the origin by design** (CloudFront, Nov 2024): ALB/NLB/EC2 in private subnets leave no distinguishing edge trace. Origin is "private VPC" at most. Only a leaked `internal-*` ELB hostname or `*.compute.internal` name upgrades this — and only to the type/region in the leak.
 16. **Latency-routed globals resolve differently per location** (e.g. Lambda Web Functions `*.lambda-web.global.on.aws` → per-region CNAMEs). Different CNAME chains from different resolvers are routing, not multi-CDN or fast-flux. Record resolver + vantage for every DNS row.
+17. **JA4S rotates with stack updates** — never hardcode or copy hashes. Always capture target + reference in the same session and compare; record the raw strings (`references/tls-fingerprints.md`).
 
 ## Worked example (real observation, target withheld, 2026-11-04)
 
