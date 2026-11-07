@@ -45,6 +45,9 @@ Dates are JST. Entries under `Unreleased` move to a dated section on commit.
 - TLS fingerprinting (JA4S): `references/tls-fingerprints.md` (single-handshake
   tcpdump + ja4.py procedure, differential same-session protocol, empty
   registry — no prefabricated hashes); pitfall 17 forbids hardcoded hashes.
+- Suffix audit via CT logs: added `*.cdn.cloudflare.net` (4k+ certs);
+  fixed EdgeOne to `*.edgeone.cool` (CT-confirmed); rejected
+  `*.c.storage.googleapis.com` (zero certs — not added).
 
 ## [2026-11-07] — DB拡充・多層判定・Pages足場
 
