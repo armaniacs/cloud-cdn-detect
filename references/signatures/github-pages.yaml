@@ -1,0 +1,27 @@
+provider: github-pages
+display: GitHub Pages
+verified: true
+sources:
+  - https://docs.github.com/en/pages/
+  - https://api.github.com/meta
+signals:
+  - type: header
+    match: Server
+    pattern: ^GitHub\.com$
+    weight: 10
+    verified: true
+    source: https://docs.github.com/en/pages/
+  - type: header
+    match: x-github-request-id
+    pattern: .+
+    weight: 10
+    verified: true
+    source: https://docs.github.com/en/pages/
+  - type: cname
+    pattern: \.github\.io$
+    weight: 25
+    source: https://docs.github.com/en/pages/
+  - type: cidr
+    value: 185.199.108.0/22
+    weight: 35
+    source: https://api.github.com/meta

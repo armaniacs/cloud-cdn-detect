@@ -1,0 +1,43 @@
+provider: azure
+display: Microsoft Azure (Front Door / CDN)
+verified: false
+sources:
+  - https://learn.microsoft.com/en-us/azure/frontdoor/
+  - https://www.microsoft.com/en-us/download/details.aspx?id=56519
+signals:
+  - type: header
+    match: x-azure-ref
+    pattern: .+
+    weight: 10
+    source: https://learn.microsoft.com/en-us/azure/frontdoor/
+  - type: header
+    match: X-MSEdge-Ref
+    pattern: .+
+    weight: 10
+    source: https://learn.microsoft.com/en-us/azure/frontdoor/
+  - type: header
+    match: X-Cache
+    pattern: OriginShield
+    weight: 10
+    source: https://learn.microsoft.com/en-us/azure/cdn/
+  - type: cname
+    pattern: \.azurefd\.net$
+    weight: 25
+    source: https://learn.microsoft.com/en-us/azure/frontdoor/
+  - type: cname
+    pattern: \.afd\.azureedge\.net$
+    weight: 25
+    source: https://learn.microsoft.com/en-us/azure/frontdoor/
+  - type: cname
+    pattern: \.azureedge\.net$
+    weight: 25
+    source: https://learn.microsoft.com/en-us/azure/cdn/
+  - type: cidr
+    ref: azure-service-tags:AzureFrontDoor.Frontend
+    weight: 35
+    source: https://www.microsoft.com/en-us/download/details.aspx?id=56519
+  - type: asn
+    values:
+      - AS8075
+    weight: 35
+    source: https://www.microsoft.com/en-us/download/details.aspx?id=56519

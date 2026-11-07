@@ -1,0 +1,36 @@
+provider: netlify
+display: Netlify
+verified: true
+sources:
+  - https://docs.netlify.com/
+signals:
+  - type: header
+    match: Server
+    pattern: ^Netlify$
+    weight: 10
+    verified: true
+    source: https://docs.netlify.com/
+  - type: header
+    match: x-nf-request-id
+    pattern: .+
+    weight: 10
+    verified: true
+    source: https://docs.netlify.com/
+  - type: header
+    match: server-timing
+    pattern: aws-nrt
+    weight: 10
+    verified: true
+    source: https://docs.netlify.com/
+  - type: cname
+    pattern: \.netlify\.app$
+    weight: 25
+    source: https://docs.netlify.com/
+  - type: cname
+    pattern: (^|.)netlifyglobalcdn\.com$
+    weight: 25
+    source: https://docs.netlify.com/
+  - type: cidr
+    value: 75.2.60.5/32
+    weight: 35
+    source: https://docs.netlify.com/
