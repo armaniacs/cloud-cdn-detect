@@ -44,6 +44,75 @@ in Evidence, and never infer the origin region from an edge code alone.
 
 Vercel runs on AWS; the code names the cloud region hosting the compute.
 
+## GCP region names (verified against docs 2026-11-08)
+
+GCP has no PoP-code header, but region slugs leak through hostnames —
+Cloud Run `{service}-{hash}-{region}.a.run.app` and Cloud Functions
+`{region}-{project}.cloudfunctions.net`. The slug is a **compute** signal.
+
+| Slug | City |
+|---|---|
+| asia-northeast1 | Tokyo |
+| asia-northeast2 | Osaka |
+| asia-northeast3 | Seoul |
+| asia-east1 | Taiwan |
+| asia-east2 | Hong Kong |
+| asia-southeast1 | Singapore |
+| asia-southeast2 | Jakarta |
+| asia-south1 | Mumbai |
+| australia-southeast1 | Sydney |
+| us-central1 | Iowa |
+| us-east1 | South Carolina |
+| us-east4 | N. Virginia |
+| us-west1 | Oregon |
+| northamerica-northeast1 | Montreal |
+| northamerica-northeast2 | Toronto |
+| europe-west1 | Belgium |
+| europe-west2 | London |
+| europe-west3 | Frankfurt |
+| europe-west6 | Zurich |
+| europe-north1 | Finland |
+| southamerica-east1 | São Paulo |
+| me-west1 | Tel Aviv |
+| africa-south1 | Johannesburg |
+
+Full list: Cloud locations docs. New regions appear yearly — look up, don't guess.
+
+## Azure region names (verified against docs 2026-11-08)
+
+Region slugs leak through classic hostnames —
+`{name}.{region}.cloudapp.azure.com` (`*.azurewebsites.net` carries no region).
+The slug is a **compute** signal.
+
+| Slug | City |
+|---|---|
+| japaneast | Tokyo (Saitama) |
+| japanwest | Osaka |
+| eastasia | Hong Kong |
+| southeastasia | Singapore |
+| australiaeast | Sydney |
+| centralindia | Pune |
+| eastus / eastus2 | Virginia |
+| westus2 | Washington state |
+| centralus | Iowa |
+| uksouth | London |
+| westeurope | Netherlands |
+| northeurope | Ireland |
+| francecentral | Paris |
+| germanywestcentral | Frankfurt |
+| swedencentral | Gävle |
+| switzerlandnorth | Zurich |
+| canadacentral | Toronto |
+| brazilsouth | São Paulo |
+| uaenorth | UAE |
+
+`x-azure-ref` is opaque — do not parse region out of it.
+
+## Cloudflare / Fastly need no separate table
+
+Both use the same IATA system as the edge table above (`cf-ray: …-NRT`,
+`x-served-by: cache-…-ITM`). All such codes are **edge-only**.
+
 ## Major IATA codes for edge headers (CloudFront / Cloudflare / Fastly)
 
 Same IATA system as above. Frequently observed hubs:

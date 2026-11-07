@@ -31,6 +31,9 @@ Dates are JST. Entries under `Unreleased` move to a dated section on commit.
 - Region / PoP codes: `references/region-codes.md` (Vercel 18 regions verified,
   major IATA hubs, edge-vs-compute semantics); §7 decodes PoP into Evidence,
   pitfall 14 forbids origin-region inference from edge codes.
+  Follow-up: GCP region slugs (Cloud Run / Functions hostnames) and Azure
+  region slugs (`*.cloudapp.azure.com`), both verified against docs;
+  Cloudflare/Fastly reuse IATA (no separate table).
 
 ## [2026-11-07] — DB拡充・多層判定・Pages足場
 
