@@ -171,3 +171,6 @@ origin's region.
   whois prefix evidence — never an edge PoP alone.
 - Unknown codes: search the provider's edge-location / region docs before
   adding them here; never guess from resemblance.
+- Leaked AWS-internal hostnames decode as compute signals with standard slugs:
+  `internal-*.{region}.elb.amazonaws.com`, `ip-10-0-x-x.{region}.compute.internal`
+  (the latter is the documented EC2 VPC-origin domain format).

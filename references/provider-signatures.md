@@ -27,6 +27,12 @@ Match observed HTTP headers, DNS records, whois results, and TLS certificates ag
 
 Example whois of a Tokyo-region IP: `OrgName: Amazon Technologies Inc.` / `NetName: AT-88-Z` / prefix `35.72.0.0/13` / AS16509 (AMAZON-02) ✓
 
+**VPC origins (Nov 2024)**: ALB/NLB/EC2 in private subnets can serve as CloudFront origins over a private ENI connection. Consequences for passive observation:
+- No edge signature change — `x-amz-cf-*`, `via`, `x-cache` look identical. There is no header/CNAME/ASN test that distinguishes a VPC origin from a public one.
+- The origin is unresolvable and unreachable from outside by design ("won't be discoverable over the internet" after the subnet goes private). Report Origin as "private VPC (type unknown)" at most; never guess ALB vs NLB vs EC2.
+- Leak signals (only if they surface in cert SAN / headers / error pages): `internal-*.{region}.elb.amazonaws.com` (internal LB hostname; region slug decodes via `references/region-codes.md` rules) and EC2 private DNS `ip-10-0-x-x.{region}.compute.internal` (documented as the EC2 VPC-origin domain format). Either is a strong VPC-origin hint (weight as CNAME, 25).
+- Background knowledge (not observable): origins allow the `com.amazonaws.global.cloudfront.origin-facing` managed prefix list or the service SG `CloudFront-VPCOrigins-Service-SG`. Supported in Tokyo (`ap-northeast-1`, except `apne1-az3`) and Osaka (`ap-northeast-3`).
+
 **DNS visibility note**: Route 53 Alias (apex) returns direct A records with no CNAME. Private hosted zone and VPC Lattice names do not resolve from public resolvers. A `dig` result always depends on `@resolver` and where it was run (inside/outside the VPC); record both.
 
 ## Google Cloud (GCP)
