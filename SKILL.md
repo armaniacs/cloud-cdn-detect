@@ -141,6 +141,7 @@ curl -s https://api.github.com/meta | jq -r '.pages[]'
 
 - Accuracy: Cloudflare = Fastly (exact edge list) > AWS CloudFront / Azure FrontDoor (per-service tags) > GCP (whole-cloud match) > no-feed providers (below)
 - No machine-readable feed exists (verified 2026-11-07, do not invent URLs): Akamai, Vercel (dynamic IPs; use `76.76.21.21` / `cname.vercel-dns.com`), Netlify (apex LB `75.2.60.5` + DNS), Shopify, Sakura / Xserver / GMO / IIJ. For these, judge by DNS + CNAME + ASN/whois + certificates only.
+- Static-CIDR / ASN-only providers (Baidu, Tencent, CDNetworks, F5, Leaseweb, Qrator et al.): do not copy thousand-line blocks. Reference [cdncheck `provider.yaml`](https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml) (`cdn.urls` / `cdn.asn` / `cdn.cidr`) at investigation time — the same file backs `references/signatures/*.yaml` `ref:` pointers. Upstream change-tracking runs via the weekly feed-watch; bulk auto-import is intentionally not done (size, trust, reviewability).
 
 ### 6. TLS certificate (optional)
 ```bash
