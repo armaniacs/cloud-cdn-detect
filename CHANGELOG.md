@@ -14,6 +14,10 @@ Dates are JST. Entries under `Unreleased` move to a dated section on commit.
 
 ### Added
 
+## [2026-11-08] — スキーマ移行・多層判定・OSINT統合
+
+### Added
+
 - Bilingual docs site (EN/JA): `index-ja.md` landing and `CONTRIBUTING-ja.md`
   with EN↔JA switch links. Reference docs (SKILL, signatures, changelog)
   stay English as the source of truth.
