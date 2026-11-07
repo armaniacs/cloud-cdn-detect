@@ -28,9 +28,9 @@ signals:
     negative:
       - eo.dnse1.com.evil.example
   - type: cname
-    pattern: \.edgeone\.co$
+    pattern: \.edgeone\.co(ol)?$
     weight: 25
-    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+    source: CT log observation (crt.sh, 2026-11-08, *.edgeone.cool confirmed; bare .co unconfirmed)
     negative:
       - edgeone.com
   - type: cidr

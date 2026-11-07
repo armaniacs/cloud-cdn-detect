@@ -54,7 +54,7 @@ Example whois of a Tokyo-region IP: `OrgName: Amazon Technologies Inc.` / `NetNa
 
 | Provider | HTTP headers | Hostname / DNS | whois / ASN |
 |---|---|---|---|
-| Cloudflare | `Server: cloudflare` ✓, `cf-ray` (PoP suffix such as `-KIX`) ✓, `cf-cache-status`, `cf-mitigated: challenge\|blocked` | CNAME flattening hides the root CNAME. `*.cloudflare.net` | AS13335 (CLOUDFLARENET) |
+| Cloudflare | `Server: cloudflare` ✓, `cf-ray` (PoP suffix such as `-KIX`) ✓, `cf-cache-status`, `cf-mitigated: challenge\|blocked` | CNAME flattening hides the root CNAME. `*.cloudflare.net`, `*.cdn.cloudflare.net` (CT-confirmed, 4k+ certs) | AS13335 (CLOUDFLARENET) |
 | Fastly | `x-served-by: cache-<airport-code>-*` (e.g. `cache-itm1220029-ITM`) ✓, `x-cache: MISS, HIT, MISS` ✓, `x-cache-hits` ✓, `x-timer` ✓, `Fastly-Debug-Digest`, `Server: artisan` (some properties, e.g. fastly.com) | `*.fastly.net`, `nonssl.global-ssl.fastly.net`, `*.fastlylb.com` | AS54113 (FASTLY) |
 | Akamai | `Server: AkamaiGHost` ✓ (observed on www.microsoft.com), `X-Akamai-Transformed`, `X-Check-Cacheable` | `*.akamaiedge.net` (Standard TLS), `*.edgekey.net` (Enhanced TLS), `*.edgesuite.net`, `*.akamaized.net`, `*.akadns.net`. Never shorten to `akamai.net` — that misses `akamaiedge.net` on dot-boundary | AS20940 / AS16625 (AKAMAI). No official CIDR feed; ASN tracking is the standard |
 | Azure Front Door | `x-azure-ref`, `X-MSEdge-Ref` | `*.azurefd.net`, `*.afd.azureedge.net` | AS8075 (MICROSOFT) |
@@ -67,7 +67,7 @@ Sourced from [ProjectDiscovery cdncheck `provider.yaml`](https://github.com/proj
 
 | Provider | HTTP headers / cookies | Hostname / DNS | IP / ASN source |
 |---|---|---|---|
-| Tencent Cloud EdgeOne | `Server: EO-Edge`, `eo-log-uuid`, `eo-cache-status` | `*.eo.dnse1.com`, `*.edgeone.co` | Static CIDR in `provider.yaml` (`tencent:` block); AS132203 et al. |
+| Tencent Cloud EdgeOne | `Server: EO-Edge`, `eo-log-uuid`, `eo-cache-status` | `*.eo.dnse1.com`, `*.edgeone.cool` (CT-confirmed; `edgeone.co` unconfirmed — pattern covers both) | Static CIDR in `provider.yaml` (`tencent:` block); AS132203 et al. |
 | Gcore | `Server: gcore`, `X-GCore-Request-ID` | `*.gcdn.co` | Official feed `https://api.gcore.com/cdn/public-ip-list` (verified 200, ~42KB) |
 | Imperva (Incapsula) | `X-Iinfo`, `X-CDN: Imperva`, cookies `incap_ses_*`, `visid_incap_*` | `*.incapdns.net` | Official IP list via API endpoint (see cdncheck sources) |
 | Sucuri CloudProxy | `Server: Sucuri/Cloudproxy`, `X-Sucuri-ID`, `X-Sucuri-Cache` | `*.sucuri.net` | Official CIDR incl. `192.88.134.0/23` |
