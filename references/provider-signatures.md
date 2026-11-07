@@ -36,6 +36,7 @@ Example whois of a Tokyo-region IP: `OrgName: Amazon Technologies Inc.` / `NetNa
 | Cloud Storage (GCS) | `x-guploader-uploadid` ✓, `x-goog-generation` / `x-goog-metageneration` / `x-goog-stored-content-*` / `x-goog-hash` / `x-goog-storage-class` ✓ | `storage.googleapis.com`, `*.storage.googleapis.com`. `x-guploader-*` shows through on custom domains ✓ | AS15169 (GOOGLE) |
 | GFE / Cloud Load Balancing (origin side) | When the origin is a GFE (in front of GCLB / GAE / Cloud Run / Firebase Hosting), `via: 1.1 google` comes back even behind a CDN ✓ (observed behind Cloudflare) | | |
 | Cloud Functions | | URL format `{region}-{project-id}.cloudfunctions.net` ✓ — the project ID is exposed in the URL (example: `asia-northeast1-example-project.cloudfunctions.net`) | 216.239.x etc., AS15169 |
+| Cloud Run | | Hostname format `{service}-{hash}-{region}.a.run.app` — `{region}` is a GCP region slug, decode via `references/region-codes.md` | |
 | Google account avatars | | `lh3.googleusercontent.com` (weak side-evidence of Firebase Auth / Google sign-in) | |
 
 **Pitfall**: Cloudflare Universal SSL edge certificates can be issued by Google Trust Services (`CN=WE1`) or Let's Encrypt. **The CDN edge certificate issuer is not evidence of the origin** (GTS WE1 observed in the wild; use the `via` header and similar for evidence of a Google origin) ✓
@@ -51,6 +52,7 @@ Example whois of a Tokyo-region IP: `OrgName: Amazon Technologies Inc.` / `NetNa
 | Akamai | `Server: AkamaiGHost` ✓ (observed on www.microsoft.com), `X-Akamai-Transformed`, `X-Check-Cacheable` | `*.akamaiedge.net` (Standard TLS), `*.edgekey.net` (Enhanced TLS), `*.edgesuite.net`, `*.akamaized.net`, `*.akadns.net`. Never shorten to `akamai.net` — that misses `akamaiedge.net` on dot-boundary | AS20940 / AS16625 (AKAMAI). No official CIDR feed; ASN tracking is the standard |
 | Azure Front Door | `x-azure-ref`, `X-MSEdge-Ref` | `*.azurefd.net`, `*.afd.azureedge.net` | AS8075 (MICROSOFT) |
 | Azure CDN | `X-Cache: *OriginShield*` | `*.azureedge.net` | AS8075 |
+| App Service / Cloud Services | | `{name}.{region}.cloudapp.azure.com` (`{region}` is an Azure slug, decode via `references/region-codes.md`), `*.azurewebsites.net` (no region) | AS8075 |
 
 ## Emerging CDN / WAF / regional providers (cdncheck-derived, verify when it matters)
 
