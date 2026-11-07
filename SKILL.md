@@ -106,10 +106,10 @@ Compare against `references/provider-signatures.md`. **When a signature not in t
 
 ## Evidence
 | Observation | Resolver | Result | Suggests |
-|---|---|---|
-| HTTP header | x-amz-cf-id: … | AWS CloudFront |
-| DNS | A 54.239.163.x | CloudFront edge |
-| whois | OrgName: Amazon Technologies Inc. | AWS |
+|---|---|---|---|
+| HTTP header | system-default | x-amz-cf-id: … | AWS CloudFront |
+| DNS | @1.1.1.1 | A 54.239.163.x | CloudFront edge |
+| whois | system-default | OrgName: Amazon Technologies Inc. | AWS |
 
 ## Caveats
 - … (CDN confirmed but origin unidentified, marketing site on a different provider, etc.)
