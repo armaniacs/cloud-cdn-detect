@@ -27,11 +27,13 @@ npx skills add armaniacs/cloud-cdn-detect --list
 
 ## What it does
 
-- **Passive observation only.** Ordinary `curl` requests, `dig`, `whois`, TLS certificate inspection, and public web information. No port scans, no directory brute-forcing, no vulnerability probing, no high-volume requests.
+- **Passive observation only.** Ordinary `curl` requests, `dig`, `whois`, TLS certificate inspection, official IP-range feeds, and public web information. No port scans, no directory brute-forcing, no vulnerability probing, no high-volume requests, no on-demand scans.
 - **Facts and inference stay separate.** Every conclusion is paired with the raw observations (headers, DNS, whois output) that support it — no unsupported assertions.
-- **Confidence is explicit.** "High" requires multiple independent signatures (e.g. whois/ASN plus headers/CNAME) agreeing without contradiction.
+- **Confidence is explicit and scored.** Weighted signals (`S_total = min(100, Σ w_i)`) map to high (≥60) / medium (40–59) / low (<40). A lone header never exceeds low.
+- **Stacks split into three slots.** Edge (CDN/WAF) / Platform (PaaS) / Origin (IaaS/hosting) are reported separately instead of a single winner.
 - **The signature database grows.** When an unknown signature shows up, its origin is researched via web search before it is added to `references/provider-signatures.md`.
 - **Japanese provider coverage.** Sakura Internet (including Enhanced LB and Web Accelerator), Xserver, GMO group (ConoHa / lolipop / heteml), and IIJ — alongside AWS, Google Cloud, Cloudflare, Fastly, Akamai, Vercel, Netlify, and more.
+- **Emerging/regional coverage (cdncheck-derived).** Tencent EdgeOne, Gcore, Imperva, Sucuri, ArvanCloud, CDNetworks, Baidu, Huawei, Leaseweb/Qrator/F5 et al. — verify when it matters.
 
 ## How it works
 
@@ -41,42 +43,44 @@ npx skills add armaniacs/cloud-cdn-detect --list
 | 2. HTTP headers | `curl -sIL https://<domain>` — check `server`, `via`, `x-amz-*`, `x-cache`, `cf-*`, `x-vercel-id`, `server-timing`, and more |
 | 3. DNS | `dig +short <host>` (A / AAAA), `dig +short <host> CNAME` — for apex, www, app, api, cdn, static, etc. |
 | 4. whois | `whois <ip>` — netname / descr / OrgName, the registered owner of the IP |
-| 5. ASN | `whois -h whois.cymru.com " -v <ip>"` — the announcing AS and organization |
-| 6. TLS certificate | `openssl s_client` — issuer and SAN can reveal the CDN or operator |
-| 7. Signature match | Compare observations against [`references/provider-signatures.md`](./references/provider-signatures.md) |
-| 8. Web cross-check | Provider case studies, operator engineering blogs, job postings, Wappalyzer / BuiltWith / bgp.he.net |
-| 9. Report | Conclusion + evidence table + caveats + confidence |
+| 5. ASN | Cymru whois/DNS → RIPEstat → RDAP (APNIC-first) for IP→AS; PeeringDB (`/api/net?asn=`) for ASN-to-org corroboration |
+| 5c. IP ranges | Official feeds: AWS / GCP / Azure (cached) / Cloudflare / Fastly / GitHub Pages. Akamai, Vercel, Netlify, Shopify, and JP hosts publish no machine-readable feed |
+| 6. TLS certificate | `openssl s_client` plus crt.sh (`?q=%25.<domain>&output=json`) for issuer corroboration |
+| 7. Signature match | Four layers (network / DNS chain / transport / app) against [`references/provider-signatures.md`](./references/provider-signatures.md), then weighted score `S_total` |
+| 8. Web cross-check | Provider case studies, operator engineering blogs, plus bgp.he.net / MXToolBox / Radar / urlscan (read-only; never Rescan). Shodan/Censys/VT only with a key, past data only |
+| 9. Report | Edge / Platform / Origin slots + evidence table + score + caveats |
 
 ## Evidence hierarchy
 
-1. **whois / ASN** — registered owner of the IP. Nearly conclusive
+1. **whois / RDAP / ASN** — registered owner of the IP. Nearly conclusive
 2. **HTTP headers / CNAME / TLS certificate** — implementation signatures. Strong, but can be rewritten or stripped
-3. Provider-published IP ranges (`https://ip-ranges.amazonaws.com/` etc.)
+3. Provider-published IP ranges (AWS, GCP, Azure Service Tags, Cloudflare, Fastly, GitHub Pages)
 4. Public statements (official blogs, case studies, job postings)
-5. Third-party databases (Wappalyzer / BuiltWith / Netcraft / bgp.he.net) — indicative only
+5. Third-party databases (PeeringDB, crt.sh, urlscan past results, MXToolBox, Radar, bgp.he.net; Wappalyzer / BuiltWith / Netcraft) — indicative only
 
 ## Report format
 
 ```markdown
 ## Conclusion
-<domain> is estimated to run on <provider> (confidence: high/medium/low)
+Edge: <CDN/WAF> / Platform: <PaaS or n/a> / Origin: <IaaS/hosting or unknown>
+(score S_total, confidence: high/medium/low)
 
 ## Evidence
 | Observation | Result | Suggests |
 |---|---|---|
-| HTTP header | x-amz-cf-id: … | AWS CloudFront |
-| DNS | A 54.239.163.x | CloudFront edge |
-| whois | OrgName: Amazon Technologies Inc. | AWS |
+| HTTP header | x-amz-cf-id: … | Edge: AWS CloudFront (+10) |
+| DNS | A 54.239.163.x | Edge: CloudFront (+35 feed) |
+| whois | OrgName: Amazon Technologies Inc. | Origin: AWS |
 
 ## Caveats
 - … (CDN confirmed but origin unidentified, marketing site on a different provider, etc.)
 ```
 
-**Confidence levels**
+**Confidence levels (score-mapped)**
 
-- **High**: multiple independent signatures agree (whois/ASN + headers/CNAME etc.), no contradictions
-- **Medium**: signatures agree but come from a single source, or public confirmation is missing or outdated
-- **Low**: weak clues, contradictions, or limited observation scope
+- **High (≥60, Definitive)**: multiple independent high-weight signals agree, no contradictions
+- **Medium (40–59, Probable)**: signals agree but come from a single source, or public confirmation is missing or outdated
+- **Low (<40, Heuristic)**: weak clues, contradictions, or limited observation scope
 
 ## Signature database
 
@@ -84,7 +88,7 @@ npx skills add armaniacs/cloud-cdn-detect --list
 
 - **AWS** — CloudFront, S3 static hosting, API Gateway, ELB, ACM-issued certificates
 - **Google Cloud** — Cloud Storage, GFE (`via: 1.1 google`), Cloud Functions
-- **CDNs** — Cloudflare, Fastly, Akamai, Azure Front Door / Azure CDN
+- **CDNs** — Cloudflare, Fastly, Akamai, Azure Front Door / Azure CDN; emerging/regional (Tencent EdgeOne, Gcore, Imperva, Sucuri, ArvanCloud, CDNetworks, Baidu, Huawei — cdncheck-derived)
 - **PaaS / hosting** — Vercel, Netlify, GitHub Pages, Heroku, Shopify, Wix, Squarespace
 - **Japanese hosting** — Sakura Internet (Enhanced LB and Web Accelerator included), Xserver, GMO group, IIJ
 
@@ -115,12 +119,16 @@ A real investigation of a Japanese SaaS, observed 2026-11-04 (service name, doma
 
 Found a signature not in the table? Verify its origin via web search, then open a PR adding it to `references/provider-signatures.md` (with a ✓ if you observed it yourself).
 
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for the checklist, and the docs site
+`https://armaniacs.github.io/cloud-cdn-detect/` for browsable signatures and changelog.
+
 ## Repository structure
 
 ```text
 cloud-cdn-detect/
 ├── SKILL.md                       # The skill: investigation procedure and reporting rules
 ├── README.md                      # This file
+├── CHANGELOG.md                   # Notable changes (Keep a Changelog format)
 └── references/
     └── provider-signatures.md     # Signature lookup table (grows with each observation)
 ```
