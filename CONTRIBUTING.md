@@ -3,6 +3,8 @@ layout: default
 title: Contributing
 ---
 
+**English** | [日本語](./CONTRIBUTING-ja.html)
+
 # Contributing to cloud-cdn-detect
 
 External contributions are welcome — especially new provider signatures and

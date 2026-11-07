@@ -10,6 +10,14 @@ All notable changes to cloud-cdn-detect are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Dates are JST. Entries under `Unreleased` move to a dated section on commit.
 
+## [Unreleased]
+
+### Added
+
+- Bilingual docs site (EN/JA): `index-ja.md` landing and `CONTRIBUTING-ja.md`
+  with EN↔JA switch links. Reference docs (SKILL, signatures, changelog)
+  stay English as the source of truth.
+
 ## [2026-11-07] — DB拡充・多層判定・Pages足場
 
 ### Added

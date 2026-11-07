@@ -3,6 +3,8 @@ layout: default
 title: cloud-cdn-detect
 ---
 
+**English** | [日本語](./index-ja.html)
+
 # cloud-cdn-detect
 
 Identify which cloud, CDN, or hosting provider runs behind a website, API,
