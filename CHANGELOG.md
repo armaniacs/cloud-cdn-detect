@@ -21,6 +21,9 @@ Dates are JST. Entries under `Unreleased` move to a dated section on commit.
   provider-per-file), 16 Emerging providers as YAML, `tools/validate-signatures.py`
   (canonical weights, regex compile, boundary negative tests), read-only CI
   (`.github/workflows/validate-signatures.yml`, validates on PR/push, never commits).
+- Signatures YAML (Task 11): existing tables migrated (AWS/GCP/Cloudflare/Fastly/
+  Akamai/Azure/Vercel/Netlify/GitHub Pages/Heroku/Shopify/Wix/Squarespace/Sakura/
+  Xserver/GMO/IIJ), schema v1.1 (`cert` issuer patterns, optional per-signal `verified`).
 
 ## [2026-11-07] — DB拡充・多層判定・Pages足場
 
