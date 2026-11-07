@@ -1,0 +1,17 @@
+provider: qrator
+display: Qrator Labs
+verified: false
+sources:
+  - https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+signals:
+  - type: asn
+    values:
+      - AS197068
+      - AS200449
+      - AS51115
+    weight: 35
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+  - type: cidr
+    ref: cdncheck:cidr:qrator
+    weight: 35
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml

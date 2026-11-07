@@ -1,0 +1,23 @@
+provider: arvancloud
+display: ArvanCloud
+verified: false
+sources:
+  - https://www.arvancloud.ir/fa/ips.txt
+  - https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+signals:
+  - type: asn
+    values:
+      - AS208006
+      - AS205585
+    weight: 35
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+  - type: cidr
+    values:
+      - 185.143.232.0/22
+      - 185.215.232.0/22
+    weight: 35
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+  - type: cidr
+    ref: https://www.arvancloud.ir/fa/ips.txt
+    weight: 35
+    source: https://www.arvancloud.ir/fa/ips.txt

@@ -1,0 +1,15 @@
+provider: gocache
+display: GoCache (Brazil)
+verified: false
+sources:
+  - https://gocache.com.br/ips
+  - https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+signals:
+  - type: cidr
+    ref: cdncheck:cidr:gocache
+    weight: 35
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+  - type: cidr
+    ref: https://gocache.com.br/ips
+    weight: 35
+    source: https://gocache.com.br/ips

@@ -1,0 +1,39 @@
+provider: tencent-edgeone
+display: Tencent Cloud EdgeOne
+verified: false
+sources:
+  - https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+signals:
+  - type: header
+    match: Server
+    pattern: ^EO-Edge$
+    weight: 10
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+    negative:
+      - EO-Edge-Extra
+  - type: header
+    match: eo-log-uuid
+    pattern: .+
+    weight: 10
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+  - type: header
+    match: eo-cache-status
+    pattern: .+
+    weight: 10
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+  - type: cname
+    pattern: \.eo\.dnse1\.com$
+    weight: 25
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+    negative:
+      - eo.dnse1.com.evil.example
+  - type: cname
+    pattern: \.edgeone\.co$
+    weight: 25
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+    negative:
+      - edgeone.com
+  - type: cidr
+    ref: cdncheck:cidr:tencent
+    weight: 35
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml

@@ -1,0 +1,10 @@
+provider: cdnetworks
+display: CDNetworks
+verified: false
+sources:
+  - https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+signals:
+  - type: cidr
+    ref: cdncheck:cidr:cdnetworks
+    weight: 35
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml

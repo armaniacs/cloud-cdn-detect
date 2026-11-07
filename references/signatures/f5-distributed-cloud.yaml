@@ -1,0 +1,10 @@
+provider: f5-distributed-cloud
+display: F5 Distributed Cloud
+verified: false
+sources:
+  - https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
+signals:
+  - type: cidr
+    ref: cdncheck:cidr:f5
+    weight: 35
+    source: https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml
