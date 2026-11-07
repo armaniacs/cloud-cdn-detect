@@ -113,6 +113,26 @@ The slug is a **compute** signal.
 Both use the same IATA system as the edge table above (`cf-ray: …-NRT`,
 `x-served-by: cache-…-ITM`). All such codes are **edge-only**.
 
+## Sakura Cloud zones (verified against SDK source 2026-11-08)
+
+Zone slugs from [sacloud/libsacloud `types/zone.go`](https://github.com/sacloud/libsacloud/blob/main/v2/sacloud/types/zone.go).
+A zone names the datacenter itself, so it is a **compute** signal (like a
+Vercel region code, not an edge PoP).
+
+| Slug | Zone |
+|---|---|
+| tk1a | 東京第1ゾーン |
+| tk1b | 東京第2ゾーン |
+| is1a | 石狩第1ゾーン |
+| is1b | 石狩第2ゾーン (SDKコメント原文は「第1」のまま・ID 31002) |
+| tk1v | サンドボックスゾーン |
+
+Where slugs surface: Sakura Cloud API endpoint hostnames
+(`…/cloud/zone/{tk1a,…}/api/…`), usacloud/Terraform `--zone` values, and
+proxy configs. Host `svXX-oskXX-jp` in Web Accelerator `via` lines reads as
+Osaka (`osk` ≈ metro code; IATA airports are KIX/ITM) — treat as an Osaka
+edge hint, corroborated by CNAME/ASN as usual.
+
 ## Major IATA codes for edge headers (CloudFront / Cloudflare / Fastly)
 
 Same IATA system as above. Frequently observed hubs:
