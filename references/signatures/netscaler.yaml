@@ -1,0 +1,18 @@
+provider: netscaler
+display: Citrix NetScaler (ADC, on-prem)
+verified: false
+sources:
+  - https://github.com/hdyrawan/w4f/blob/main/docs/vendor-signatures.md
+signals:
+  - type: header
+    match: Via
+    pattern: \bns-cache\b
+    weight: 10
+    source: https://github.com/hdyrawan/w4f/blob/main/docs/vendor-signatures.md
+    negative:
+      - ens-cache
+  - type: cookie
+    match: NSC_*
+    pattern: ^[Nn][Ss][Cc]_
+    weight: 5
+    source: https://github.com/hdyrawan/w4f/blob/main/docs/vendor-signatures.md

@@ -71,6 +71,7 @@ Sourced from [ProjectDiscovery cdncheck `provider.yaml`](https://github.com/proj
 | Gcore | `Server: gcore`, `X-GCore-Request-ID` | `*.gcdn.co` | Official feed `https://api.gcore.com/cdn/public-ip-list` (verified 200, ~42KB) |
 | Imperva (Incapsula) | `X-Iinfo`, `X-CDN: Imperva`, cookies `incap_ses_*`, `visid_incap_*` | `*.incapdns.net` | Official IP list via API endpoint (see cdncheck sources) |
 | Sucuri CloudProxy | `Server: Sucuri/Cloudproxy`, `X-Sucuri-ID`, `X-Sucuri-Cache` | `*.sucuri.net` | Official CIDR incl. `192.88.134.0/23` |
+| Alibaba Cloud CDN | `Server: Tengine` ✓, `eagleeye-traceid` ✓ (EagleEye tracing), `ups-target-key: cdn-relay.vipserver` ✓, `served-from` ✓, `network_info: CC_CITY_NNNN` ✓ (e.g. `JP_TOKYO_2516`) | `*.alibabadns.com` (Alibaba DNS, e.g. `g.alicdn.com.gds.alibabadns.com`). Observed Tokyo chain continues to `*.edgesuite.net` → Akamai — layered delivery, report Edge and Alibaba stack separately | Resolved IPs whois to the delivering edge (Akamai in the observed case); judge per-resolution |
 | CDNetworks | Vendor headers vary by property | Apex/edge hostnames per contract | Static CIDR in `provider.yaml` (`cdnetworks:` block) |
 | ArvanCloud | Vendor headers vary by property | `*.arvancloud.ir` feed `https://www.arvancloud.ir/fa/ips.txt` | AS208006 / AS205585; static CIDR `185.143.232.0/22`, `185.215.232.0/22` etc. |
 | Baidu Cloud CDN | Vendor headers vary by property | Baidu edge hostnames | Static CIDR in `provider.yaml` (`baidu:` block, hundreds of /24) |
@@ -79,6 +80,12 @@ Sourced from [ProjectDiscovery cdncheck `provider.yaml`](https://github.com/proj
 
 Do not copy the thousand-line CIDR blocks into this file. Sync from `provider.yaml`
 at investigation time instead.
+
+## ADC / on-prem reverse proxies (any ASN — appliance, not cloud)
+
+| Product | HTTP headers / cookies | Notes |
+|---|---|---|
+| Citrix NetScaler (ADC) | `Via` containing the token `ns-cache` — match with `\bns-cache\b`, never a bare substring (`ens-cache` on Alibaba/NetEase nodes is NOT NetScaler; enforced by validator negative test). `Set-Cookie: NSC_*` (`NSC_TMAS`, `NSC_TMAA`, `NSC_AAAC`, `NSC_TMAP` — Gateway/AAA persistence) | Customer-hosted: ASN/whois shows the operator, not Citrix. Report as Platform/Gateway, not Origin cloud. `ns-cache` source: w4f vendor-signatures (independent corroboration of the boundary trap) |
 
 ## PaaS / hosting
 
@@ -128,7 +135,7 @@ No machine-readable feed (verified 2026-11-07): Akamai, Vercel, Netlify, Shopify
 Match on DNS-label boundaries, never substrings:
 
 - Akamai: `akamaiedge.net` does NOT contain the label `akamai.net`. A regex for `akamai\.net` misses `akamaiedge.net` entirely. List `akamaiedge.net` / `edgekey.net` / `edgesuite.net` / `akamaized.net` / `akadns.net` explicitly.
-- Proxy `Via`: Citrix NetScaler emits `ns-cache`; Alibaba/NetEase emit `ens-cache`. Use `\bns-cache\b`, otherwise every Chinese CDN becomes "Citrix".
+- Proxy `Via`: Citrix NetScaler emits `ns-cache`; Alibaba/NetEase emit `ens-cache`. Use `\bns-cache\b`, otherwise every Chinese CDN becomes "Citrix". Independently corroborated by [w4f `docs/vendor-signatures.md`](https://github.com/hdyrawan/w4f/blob/main/docs/vendor-signatures.md) (`ens-cache` = Alibaba/NetEase shared marker, never standalone); live Alibaba observation (Tengine edge) carried no `Via` at all, so absence proves nothing.
 - `x-served-by` presence alone is not Fastly: Cloudflare-hosted sites have returned `x-served-by: marketing-site`. Require the `cache-<pop>` value shape, corroborated by CNAME/ASN.
 
 ## rDNS / PTR hints (auxiliary, weight 10)
