@@ -55,6 +55,11 @@ Dates are JST. Entries under `Unreleased` move to a dated section on commit.
   negative `ens-cache`, `NSC_*` cookies) and Alibaba Cloud row (Tengine,
   eagleeye-traceid, alibabadns.com — direct observation of g.alicdn.com);
   `ens-cache` issuer corroborated via w4f, never standalone.
+- OSINT round 2: SaaS CNAME expansion (SendGrid/HubSpot/Webflow/GitBook/
+  Discourse/Ghost/Firebase/GitLab/Salesforce/DigitalOcean/WP Engine, via
+  nuclei-templates), F5 cookie + Edgecast Server signals (wafw00f, passive
+  only), FortiGate/F5-ASM block strings as observed-only, MISP warninglists
+  shared-infra guard, webappanalyzer candidate-mining policy.
 
 ## [2026-11-07] — DB拡充・多層判定・Pages足場
 
