@@ -119,7 +119,7 @@ A real investigation of a Japanese SaaS, observed 2026-11-04 (service name, doma
 
 Found a signature not in the table? Verify its origin via web search, then open a PR adding it to `references/provider-signatures.md` (with a ✓ if you observed it yourself).
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for the checklist, and the docs site
+See [CONTRIBUTING.md](./CONTRIBUTING.md) ([日本語](./CONTRIBUTING-ja.md)) for the checklist, and the docs site
 `https://armaniacs.github.io/cloud-cdn-detect/` for browsable signatures and changelog.
 
 ## Repository structure
