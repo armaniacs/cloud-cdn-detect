@@ -31,6 +31,7 @@ the source of truth (hybrid policy).
 | `match` | for `header`/`cookie` | header/cookie name, e.g. `Server`, `incap_ses_*` |
 | `source` | yes | URL backing this signal |
 | `verified` | optional per signal | `true` if directly observed (mirrors ✓ in Markdown) |
+| `note` | optional, free text | operator guidance (e.g. region-decode rules); ignored by the validator |
 | `negative` | recommended for `cname`/`header` | strings the pattern MUST NOT match (boundary tests) |
 
 Canonical weights: `cidr`/`asn` 35, `cname`/`cert` 25, `tls` 15,

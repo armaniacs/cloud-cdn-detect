@@ -14,6 +14,10 @@ Dates are JST. Entries under `Unreleased` move to a dated section on commit.
 
 ### Added
 
+## [2026-11-08] — スキーマ移行・多層判定・OSINT統合
+
+### Added
+
 - Bilingual docs site (EN/JA): `index-ja.md` landing and `CONTRIBUTING-ja.md`
   with EN↔JA switch links. Reference docs (SKILL, signatures, changelog)
   stay English as the source of truth.
@@ -48,6 +52,9 @@ Dates are JST. Entries under `Unreleased` move to a dated section on commit.
 - Suffix audit via CT logs: added `*.cdn.cloudflare.net` (4k+ certs);
   fixed EdgeOne to `*.edgeone.cool` (CT-confirmed); rejected
   `*.c.storage.googleapis.com` (zero certs — not added).
+- YAML follow-ups (post-#7): internal-ELB leak signal + VPC note (aws.yaml),
+  Cloud Run region hostnames (gcp.yaml), cloudapp/azurewebsites hostnames
+  (azure.yaml); `note` field documented in SCHEMA.md v1.2.
 - cdncheck sync policy (§5c): provider.yaml as reference-upstream for
   static-CIDR/ASN-only providers; bulk auto-import explicitly declined
   (refs, not copies; change-tracking via feed-watch).
