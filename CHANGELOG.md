@@ -28,6 +28,9 @@ Dates are JST. Entries under `Unreleased` move to a dated section on commit.
   `tools/check-feeds.py` (liveness + freshness + JSON-key checks, one retry on
   transient 5xx), weekly `.github/workflows/feed-watch.yml` (failures filed to a
   single `feed-watch` tracking issue; intake stays human).
+- Region / PoP codes: `references/region-codes.md` (Vercel 18 regions verified,
+  major IATA hubs, edge-vs-compute semantics); §7 decodes PoP into Evidence,
+  pitfall 14 forbids origin-region inference from edge codes.
 
 ## [2026-11-07] — DB拡充・多層判定・Pages足場
 

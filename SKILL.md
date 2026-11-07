@@ -166,7 +166,7 @@ Run four layers in parallel, then score — do not stop at the first header hit:
 3. **Transport**: certificate SAN/issuer (§6–§6b, weight 25) + TLS stack fingerprint when available (JA4S/JA3S from the normal handshake, weight 15)
 4. **Application**: diagnostic headers (weight 10) + PTR (weight 10) + provider cookies (weight 5)
 
-Score with `S_total = min(100, Σ w_i)` (weights table in `references/provider-signatures.md`). Compare against `references/provider-signatures.md`. **When a signature not in the table appears, verify its origin via web search before appending it to that file** (this skill is designed to grow with every observation). Never append a signature with an unconfirmed origin, and never record the service you observed it on — append the signature and its technical source (official documentation etc.) only, so third-party target names stay out of this repository. Opt-in probes (Akamai `Pragma`, WAF error induction, on-demand scans) stay forbidden by default — see the signatures file.
+Score with `S_total = min(100, Σ w_i)` (weights table in `references/provider-signatures.md`). Decode PoP/region codes with `references/region-codes.md` and record the edge/compute location in Evidence — edge codes (CloudFront PoP, `cf-ray` suffix, `x-served-by`) locate the serving edge only; only compute-region signals (`x-vercel-id`, `server-timing` backend hints) locate the workload. Compare against `references/provider-signatures.md`. **When a signature not in the table appears, verify its origin via web search before appending it to that file** (this skill is designed to grow with every observation). Never append a signature with an unconfirmed origin, and never record the service you observed it on — append the signature and its technical source (official documentation etc.) only, so third-party target names stay out of this repository. Opt-in probes (Akamai `Pragma`, WAF error induction, on-demand scans) stay forbidden by default — see the signatures file.
 
 ### 8. Cross-check on the web
 - Provider side: case studies / press releases from AWS / Google Cloud / Azure / Cloudflare etc.
@@ -212,6 +212,7 @@ Edge: <CDN/WAF> / Platform: <PaaS or n/a> / Origin: <IaaS/hosting or unknown>
 11. **Resolver matters**: the same name can return different answers via system-default vs 1.1.1.1 vs 8.8.8.8 (cache / ECS / filtering). Always record `@resolver`.
 12. **Route 53 Alias hides CNAME**: apex ALIAS records return direct A records. Absence of CNAME is not evidence of no CDN.
 13. **Private names are invisible from outside**: private hosted zones and VPC Lattice names only resolve from associated VPCs. Do not conclude absence from public dig.
+14. **Edge PoP ≠ origin region**: `NRT` in `x-amz-cf-pop`/`cf-ray` means a Tokyo edge served the response (it follows the viewer). Region conclusions need compute signals (`x-vercel-id: hnd1` etc.) or prefix evidence — see `references/region-codes.md`.
 
 ## Worked example (real observation, target withheld, 2026-11-04)
 
