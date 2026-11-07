@@ -1,3 +1,8 @@
+---
+layout: default
+title: Provider signatures
+---
+
 # Provider signature reference (cloud-cdn-detect)
 
 Match observed HTTP headers, DNS records, whois results, and TLS certificates against this table to identify the provider.
@@ -41,11 +46,30 @@ Example whois of a Tokyo-region IP: `OrgName: Amazon Technologies Inc.` / `NetNa
 
 | Provider | HTTP headers | Hostname / DNS | whois / ASN |
 |---|---|---|---|
-| Cloudflare | `Server: cloudflare` ✓, `cf-ray` (PoP suffix such as `-KIX`) ✓, `cf-cache-status` | CNAME flattening hides the root CNAME. `*.cloudflare.net` | AS13335 (CLOUDFLARENET) |
-| Fastly | `x-served-by: cache-<airport-code>-*` (e.g. `cache-itm1220029-ITM`) ✓, `x-cache: MISS, HIT, MISS` ✓, `x-cache-hits` ✓, `x-timer` ✓ | `*.fastly.net`, `nonssl.global-ssl.fastly.net`, `*.fastlylb.com` | AS54113 (FASTLY) |
-| Akamai | `Server: AkamaiGHost` ✓ (observed on www.microsoft.com) | `*.akamaiedge.net`, `*.edgekey.net`, `*.edgesuite.net`, `*.akamaized.net` | AS20940 / AS16625 (AKAMAI) |
-| Azure Front Door | `x-azure-ref` | `*.azurefd.net` | AS8075 (MICROSOFT) |
-| Azure CDN | | `*.azureedge.net` | AS8075 |
+| Cloudflare | `Server: cloudflare` ✓, `cf-ray` (PoP suffix such as `-KIX`) ✓, `cf-cache-status`, `cf-mitigated: challenge\|blocked` | CNAME flattening hides the root CNAME. `*.cloudflare.net` | AS13335 (CLOUDFLARENET) |
+| Fastly | `x-served-by: cache-<airport-code>-*` (e.g. `cache-itm1220029-ITM`) ✓, `x-cache: MISS, HIT, MISS` ✓, `x-cache-hits` ✓, `x-timer` ✓, `Fastly-Debug-Digest`, `Server: artisan` (some properties, e.g. fastly.com) | `*.fastly.net`, `nonssl.global-ssl.fastly.net`, `*.fastlylb.com` | AS54113 (FASTLY) |
+| Akamai | `Server: AkamaiGHost` ✓ (observed on www.microsoft.com), `X-Akamai-Transformed`, `X-Check-Cacheable` | `*.akamaiedge.net` (Standard TLS), `*.edgekey.net` (Enhanced TLS), `*.edgesuite.net`, `*.akamaized.net`, `*.akadns.net`. Never shorten to `akamai.net` — that misses `akamaiedge.net` on dot-boundary | AS20940 / AS16625 (AKAMAI). No official CIDR feed; ASN tracking is the standard |
+| Azure Front Door | `x-azure-ref`, `X-MSEdge-Ref` | `*.azurefd.net`, `*.afd.azureedge.net` | AS8075 (MICROSOFT) |
+| Azure CDN | `X-Cache: *OriginShield*` | `*.azureedge.net` | AS8075 |
+
+## Emerging CDN / WAF / regional providers (cdncheck-derived, verify when it matters)
+
+Sourced from [ProjectDiscovery cdncheck `provider.yaml`](https://github.com/projectdiscovery/cdncheck/blob/main/cmd/generate-index/provider.yaml) (verified 2026-11-07). No ✓ mark = established knowledge from that file, not direct observation. Verify again when it matters.
+
+| Provider | HTTP headers / cookies | Hostname / DNS | IP / ASN source |
+|---|---|---|---|
+| Tencent Cloud EdgeOne | `Server: EO-Edge`, `eo-log-uuid`, `eo-cache-status` | `*.eo.dnse1.com`, `*.edgeone.co` | Static CIDR in `provider.yaml` (`tencent:` block); AS132203 et al. |
+| Gcore | `Server: gcore`, `X-GCore-Request-ID` | `*.gcdn.co` | Official feed `https://api.gcore.com/cdn/public-ip-list` (verified 200, ~42KB) |
+| Imperva (Incapsula) | `X-Iinfo`, `X-CDN: Imperva`, cookies `incap_ses_*`, `visid_incap_*` | `*.incapdns.net` | Official IP list via API endpoint (see cdncheck sources) |
+| Sucuri CloudProxy | `Server: Sucuri/Cloudproxy`, `X-Sucuri-ID`, `X-Sucuri-Cache` | `*.sucuri.net` | Official CIDR incl. `192.88.134.0/23` |
+| CDNetworks | Vendor headers vary by property | Apex/edge hostnames per contract | Static CIDR in `provider.yaml` (`cdnetworks:` block) |
+| ArvanCloud | Vendor headers vary by property | `*.arvancloud.ir` feed `https://www.arvancloud.ir/fa/ips.txt` | AS208006 / AS205585; static CIDR `185.143.232.0/22`, `185.215.232.0/22` etc. |
+| Baidu Cloud CDN | Vendor headers vary by property | Baidu edge hostnames | Static CIDR in `provider.yaml` (`baidu:` block, hundreds of /24) |
+| Huawei Cloud CDN | Vendor headers vary by property | Huawei edge hostnames | AS149640 |
+| Leaseweb / Qrator / F5 / GoCache / WangSu / KINX / LG / SKB | Vendor-specific | See `provider.yaml` | ASN (`AS60626` Leaseweb; `AS197068`/`AS200449`/`AS51115` Qrator) and static `cidr:` blocks (F5, Qrator, cafe24, gocache, kinx, lgtelecom, skbroadband, huawei, wangsu) |
+
+Do not copy the thousand-line CIDR blocks into this file. Sync from `provider.yaml`
+at investigation time instead.
 
 ## PaaS / hosting
 
@@ -74,6 +98,76 @@ Google family: `Server: gws` ✓ (google.com), `Server: gfe` (Google Front End, 
 
 Sakura Internet and Xserver are both headquartered in Umeda, Osaka (Ofuka-cho), so do not judge by the whois address alone (GRAND FRONT OSAKA = Xserver, GRAND GREEN OSAKA = Sakura Internet, as observed in November 2026).
 
+## Official IP feed index (for §5c; verified 2026-11-07)
+
+| Provider | Feed URL | Notes |
+|---|---|---|
+| AWS CloudFront | `https://ip-ranges.amazonaws.com/ip-ranges.json` and `https://d7uri8nf7uskq.cloudfront.net/tools/list-cloudfront-ips` (both verified 200) | Filter `service=="CLOUDFRONT"` in the former; the latter is a flat `CLOUDFRONT_GLOBAL_IP_LIST` |
+| Google Cloud | `https://www.gstatic.com/ipranges/cloud.json` (118KB) and `https://www.gstatic.com/ipranges/goog.json` (bot/commons split) | Whole-cloud match only; exclude Googlebot via `goog.json` |
+| Azure | `ServiceTags_Public_*.json` via download page `id=56519` (weekly, ~4.6MB) | `AzureFrontDoor.Frontend`, `AzureCloud.<region>` tags; cache weekly |
+| Cloudflare | `https://www.cloudflare.com/ips-v4`, `/ips-v6` (~334B) | Exact edge list |
+| Fastly | `https://api.fastly.com/public-ip-list` (~451B) | Exact edge list |
+| Gcore | `https://api.gcore.com/cdn/public-ip-list` (~42KB) | Exact edge list |
+| GitHub | `https://api.github.com/meta` (`pages` key, 10 prefixes) | Pages only |
+| ArvanCloud | `https://www.arvancloud.ir/fa/ips.txt` | Per cdncheck `provider.yaml` |
+| GoCache (Brazil) | `https://gocache.com.br/ips` | Per cdncheck `provider.yaml` |
+
+No machine-readable feed (verified 2026-11-07): Akamai, Vercel, Netlify, Shopify, Sakura / Xserver / GMO / IIJ. Judge by DNS + CNAME + ASN/whois + certificates only.
+
+## CNAME boundary rules (avoid false positives)
+
+Match on DNS-label boundaries, never substrings:
+
+- Akamai: `akamaiedge.net` does NOT contain the label `akamai.net`. A regex for `akamai\.net` misses `akamaiedge.net` entirely. List `akamaiedge.net` / `edgekey.net` / `edgesuite.net` / `akamaized.net` / `akadns.net` explicitly.
+- Proxy `Via`: Citrix NetScaler emits `ns-cache`; Alibaba/NetEase emit `ens-cache`. Use `\bns-cache\b`, otherwise every Chinese CDN becomes "Citrix".
+- `x-served-by` presence alone is not Fastly: Cloudflare-hosted sites have returned `x-served-by: marketing-site`. Require the `cache-<pop>` value shape, corroborated by CNAME/ASN.
+
+## rDNS / PTR hints (auxiliary, weight 10)
+
+Reverse DNS can be more service-specific than whois. Resolve every observed A/AAAA back:
+
+```bash
+dig +short -x <ip> @1.1.1.1
+```
+
+- `ec2-*.compute-1.amazonaws.com` = generic EC2; `server-*.fra*.r.cloudfront.net` = CloudFront delivery node. Same owner (Amazon), different layer — record the distinction for the Edge/Platform/Origin split below.
+
+## Weighted scoring (w4f-adapted, for §7)
+
+Add weights of all matching signals, capped at 100:
+
+`S_total = min(100, Σ w_i)`
+
+| Signal | w | Rationale |
+|---|---|---|
+| Official CIDR match (§5c) | 35 | Anycast/netblock is hardest to fake |
+| CNAME to provider domain (with boundary rules) | 25 | Deliberate delegation by the operator |
+| Provider CA issuer (ACM / Google Trust / Cloudflare) corroborating TLS SAN | 25 | Management-plane evidence |
+| TLS stack fingerprint (JA4S/JA3S, when available) | 15 | Transport-layer corroboration |
+| Diagnostic header (`x-amz-cf-id`, `cf-ray`, `x-served-by: cache-*`, …) | 10 | Strong but strippable |
+| PTR match | 10 | Auxiliary |
+| Provider cookie (`sac-elb-session`, `incap_ses_*`, …) | 5 | Weakest, easily set by others |
+
+Map the total to the report confidence: **≥60 Definitive → high**, **40–59 Probable → medium**, **<40 Heuristic → low**. A single header/cookie alone can never exceed Heuristic. Keep the evidence table row-by-row regardless of the score.
+
+## Multi-layer output: Edge / Platform / Origin
+
+Never collapse a stack to a single winner. Report three slots:
+
+- **Edge** (answers the HTTP request): CDN/WAF — `cf-ray`, Cloudflare IP, `x-amz-cf-id`, Akamai edge hostname…
+- **Platform** (runs the app): PaaS — `x-vercel-id`, `server-timing: aws-nrt`, `via: 1.1 google` surviving behind a CDN, `*.vercel-dns.com` CNAME…
+- **Origin / Underlying IaaS** (owns the IP): BGP/whois — `OrgName: Amazon Technologies Inc.`, AS16509…
+
+Example: `cf-ray` + Cloudflare IP (Edge: Cloudflare), `x-vercel-id: kix1::…` (Platform: Vercel), AS16509/Amazon whois (Origin: AWS). "Uses Vercel" ≠ "uses AWS directly".
+
+## Opt-in probes (forbidden by default)
+
+Passive operation is the default and the only behavior without explicit target permission. The following are documented for completeness and MUST NOT run unless the target explicitly opts in:
+
+- Akamai `Pragma: akamai-x-cache-on, akamai-x-cache-remote-on, akamai-x-check-cacheable, akamai-x-get-cache-key, akamai-x-get-true-cache-key, akamai-x-get-request-id, akamai-x-serial-no` — reveals `X-Cache: TCP_HIT` / `X-Serial` on Akamai edges.
+- WAF error-page fingerprinting (sending malformed input to trigger block pages such as Imperva "incident ID", FortiWeb `cookiesession1`, AWS WAF "Request blocked") — active probing, same prohibition as port scans.
+- Any `shodan/scan`-style on-demand scan or urlscan Rescan.
+
 ## SaaS (reported separately as services in use, not as "the company's infrastructure")
 
 Zendesk (`support.*`, `static.zdassets.com`), statuspage.io, Stripe, Google speech recognition, reCAPTCHA, etc. When an FAQ or spec text leads to an inference such as "the speech recognition is Google's", state it clearly separated from technical observation (headers / DNS / whois).
@@ -92,3 +186,4 @@ Zendesk (`support.*`, `static.zdassets.com`), statuspage.io, Stripe, Google spee
 - 2026-11-04: Added Sakura Cloud ELB (`via: 1.1 sac-elb`, sourced from the Sakura Cloud manual's cookie spec) and Sakura Web Accelerator (`x-webaccel-*` / `*.user.webaccel.jp`) signatures from an investigation of a third-party site (target withheld)
 - 2026-11-06: Translated into English for skills.sh
 - 2026-11-06: Anonymized — observation targets are no longer recorded in this repository
+- 2026-11-07: Added Emerging CDN/WAF section (Tencent EdgeOne, Gcore, Imperva, Sucuri, ArvanCloud, CDNetworks, Baidu, Huawei, Leaseweb/Qrator/F5 et al., sourced from cdncheck provider.yaml), official IP feed index (incl. CloudFront list endpoint and Gcore feed), CNAME boundary rules, rDNS hints, w4f-adapted weighted scoring, Edge/Platform/Origin split, and opt-in probe prohibitions
